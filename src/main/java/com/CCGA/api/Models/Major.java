@@ -1,16 +1,12 @@
 package com.CCGA.api.Models;
 
-import org.springframework.data.annotation.Id;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "majors")
 public class Major {
+
     @Id
     @GeneratedValue
     private int majorID;
@@ -18,15 +14,15 @@ public class Major {
     @Column
     private String name;
 
-    @Column
-    private List<Book> booksNeeded;
+//    @Column
+//    private List<Book> booksNeeded;
 
     public Major() {
     }
 
     public Major(String name, List<Book> booksNeeded) {
         this.name = name;
-        this.booksNeeded = booksNeeded;
+//        this.booksNeeded = booksNeeded;
     }
 
     public int getMajorID() {
@@ -45,13 +41,13 @@ public class Major {
         this.name = name;
     }
 
-    public List<Book> getBooksNeeded() {
-        return booksNeeded;
-    }
-
-    public void setBooksNeeded(List<Book> booksNeeded) {
-        this.booksNeeded = booksNeeded;
-    }
+//    public List<Book> getBooksNeeded() {
+//        return booksNeeded;
+//    }
+//
+//    public void setBooksNeeded(List<Book> booksNeeded) {
+//        this.booksNeeded = booksNeeded;
+//    }
 
     @Override
     public boolean equals(Object o) {
@@ -73,7 +69,7 @@ public class Major {
         return "Major{" +
             "majorID=" + majorID +
             ", name='" + name + '\'' +
-            ", booksNeeded=" + booksNeeded +
+//            ", booksNeeded=" + booksNeeded +
             '}';
     }
 }

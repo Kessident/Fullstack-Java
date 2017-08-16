@@ -1,5 +1,8 @@
 package com.CCGA.api.Models;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class Location {
 
     private String streetNum;

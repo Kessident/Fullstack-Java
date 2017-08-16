@@ -13,7 +13,7 @@ public class School {
     @Column
     private String name;
 
-    @OneToOne
+    @Column
     private Location location;
 
     @OneToMany
