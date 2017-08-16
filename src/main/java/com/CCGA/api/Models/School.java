@@ -19,7 +19,6 @@ public class School {
     @OneToMany
     private List<Major> majorsOffered;
 
-
     public School() {
     }
 
