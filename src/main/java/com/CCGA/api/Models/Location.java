@@ -1,23 +1,23 @@
 package com.CCGA.api.Models;
 
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 
 @Embeddable
 public class Location {
 
-    private String streetNum;
+    private Integer streetNum;
     private String street;
     private String city;
     private String state;
-    private int zipCode;
-    private int zipExp;
-    private float latitude;
-    private float longitude;
+    private Integer zipCode;
+    private Integer zipExp;
+    private Float latitude;
+    private Float longitude;
 
     public Location() {
     }
 
-    public Location(String streetNum, String street, String city, String state, int zipCode, int zipExp, float latitude, float longitude) {
+    public Location(Integer streetNum, String street, String city, String state, Integer zipCode, Integer zipExp, Float latitude, Float longitude) {
         this.streetNum = streetNum;
         this.street = street;
         this.city = city;
@@ -28,11 +28,11 @@ public class Location {
         this.longitude = longitude;
     }
 
-    public String getStreetNum() {
+    public Integer getStreetNum() {
         return streetNum;
     }
 
-    public void setStreetNum(String streetNum) {
+    public void setStreetNum(Integer streetNum) {
         this.streetNum = streetNum;
     }
 
@@ -60,7 +60,7 @@ public class Location {
         this.state = state;
     }
 
-    public int getZipCode() {
+    public Integer getZipCode() {
         return zipCode;
     }
 
@@ -68,7 +68,7 @@ public class Location {
         this.zipCode = zipCode;
     }
 
-    public int getZipExp() {
+    public Integer getZipExp() {
         return zipExp;
     }
 
@@ -76,7 +76,7 @@ public class Location {
         this.zipExp = zipExp;
     }
 
-    public float getLatitude() {
+    public Float getLatitude() {
         return latitude;
     }
 
@@ -84,7 +84,7 @@ public class Location {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public Float getLongitude() {
         return longitude;
     }
 
@@ -99,14 +99,14 @@ public class Location {
 
         Location location = (Location) o;
 
-        if (zipCode != location.zipCode) return false;
-        if (zipExp != location.zipExp) return false;
-        if (Float.compare(location.latitude, latitude) != 0) return false;
-        if (Float.compare(location.longitude, longitude) != 0) return false;
         if (streetNum != null ? !streetNum.equals(location.streetNum) : location.streetNum != null) return false;
         if (street != null ? !street.equals(location.street) : location.street != null) return false;
         if (city != null ? !city.equals(location.city) : location.city != null) return false;
-        return state != null ? state.equals(location.state) : location.state == null;
+        if (state != null ? !state.equals(location.state) : location.state != null) return false;
+        if (zipCode != null ? !zipCode.equals(location.zipCode) : location.zipCode != null) return false;
+        if (zipExp != null ? !zipExp.equals(location.zipExp) : location.zipExp != null) return false;
+        if (latitude != null ? !latitude.equals(location.latitude) : location.latitude != null) return false;
+        return longitude != null ? longitude.equals(location.longitude) : location.longitude == null;
     }
 
     @Override
@@ -115,10 +115,10 @@ public class Location {
         result = 31 * result + (street != null ? street.hashCode() : 0);
         result = 31 * result + (city != null ? city.hashCode() : 0);
         result = 31 * result + (state != null ? state.hashCode() : 0);
-        result = 31 * result + zipCode;
-        result = 31 * result + zipExp;
-        result = 31 * result + (latitude != +0.0f ? Float.floatToIntBits(latitude) : 0);
-        result = 31 * result + (longitude != +0.0f ? Float.floatToIntBits(longitude) : 0);
+        result = 31 * result + (zipCode != null ? zipCode.hashCode() : 0);
+        result = 31 * result + (zipExp != null ? zipExp.hashCode() : 0);
+        result = 31 * result + (latitude != null ? latitude.hashCode() : 0);
+        result = 31 * result + (longitude != null ? longitude.hashCode() : 0);
         return result;
     }
 
