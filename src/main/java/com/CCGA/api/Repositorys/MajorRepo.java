@@ -1,4 +1,7 @@
 package com.CCGA.api.Repositorys;
 
-public class MajorRepo {
+import com.CCGA.api.Models.Major;
+import org.springframework.data.repository.CrudRepository;
+
+public interface MajorRepo extends CrudRepository<Major, Integer> {
 }

@@ -1,4 +1,7 @@
 package com.CCGA.api.Repositorys;
 
-public class UserRepo {
+import com.CCGA.api.Models.User;
+import org.springframework.data.repository.CrudRepository;
+
+public interface UserRepo extends CrudRepository<User, Integer> {
 }
