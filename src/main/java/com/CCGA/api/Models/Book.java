@@ -24,15 +24,19 @@ public class Book {
     @Column
     private String picture;
 
+    @OneToOne
+    private Major major;
+
     public Book() {
     }
 
-    public Book(String name, String author, String ISBN, String description, String picture) {
+    public Book(String name, String author, String ISBN, String description, String picture, Major major) {
         this.name = name;
         this.author = author;
         this.ISBN = ISBN;
         this.description = description;
         this.picture = picture;
+        this.major = major;
     }
 
     public int getBookID() {
@@ -81,6 +85,14 @@ public class Book {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public Major getMajor() {
+        return major;
+    }
+
+    public void setMajor(Major major) {
+        this.major = major;
     }
 
     @Override
