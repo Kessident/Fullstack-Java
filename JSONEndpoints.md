@@ -12,43 +12,43 @@ updatedAt | ```String``` | Timestamp entity was last updated at | 2017-02-06T05:
 
 Key | Value Type | Description | Example
 ---|---|---|---
-name | String | Name of School | MorehouseCollege 
-location | Location | Representation of the physical location of the school | AtlantaGA 
-listOfMajors | Array of Strings | List of all majors listed at School | {biology,math,etc…}
+name | ```String``` | Name of School | MorehouseCollege 
+location | ```Location``` | Representation of the physical location of the school | AtlantaGA 
+listOfMajors | ```Array of Strings``` | List of all majors listed at School | {biology,math,etc…}
 
 ##Location
 
 Key|Value Type|Description|Example
 ---|---|---|---
-streetNum|String|Number of street|115
-street|String|Name of street|M.L.K Jr Dr.
-city|String|Name of city|Atlanta
-state|String|Name of State|Georgia
-zipCode|Integer|Postal Zip Code|30303
-zipExp|Integer|Postal Zip Code Exp|8949
-latitude|Float|Physical global location|33.75 (N is positive, S is negative; out of 60, so converts to 33N 45)
-longitude|Float|Physical global location|-84.38 (E is positive, W is negative; Out of 60, so converts to 84W 23  
+streetNum|```Integer```|Number of street|115
+street|```String```|Name of street|M.L.K Jr Dr.
+city|```String```|Name of city|Atlanta
+state|```String```|Name of State|Georgia
+zipCode|```Integer```|Postal Zip Code|30303
+zipExp|```Integer```|Postal Zip Code Exp|8949
+latitude|```Float```|Physical global location|33.75 (N is positive, S is negative; out of 60, so converts to 33N 45)
+longitude|```Float```|Physical global location|-84.38 (E is positive, W is negative; Out of 60, so converts to 84W 23  
 
 ##Major
 
 Key|Value Type|Description|Example
 ---|---|---|---
-Name|String|Field of Study|Biology, Math
-listOfBooks|Array of Strings|Books listed by major|{All Things Biology, Biochemistry, etc,..}
+Name|```String```|Field of Study|Biology, Math
+listOfBooks|```Array of Strings```|Books listed by major|{All Things Biology, Biochemistry, etc,..}
 
 ##User
 
 Key|Value Type|Description|Example
 ---|---|---|---
-name|String|Name of student|John Smith
-email|String|Email used to log in/communicate|johnsmith@gmail.com
+name|```String```|Name of student|John Smith
+email|```String```|Email used to log in/communicate|johnsmith@gmail.com
 password| |Password used to log in (Never returned)| |
 passSalt| |Pass salt used for hashing (never returned)| |
-major|String|String representation of major|Biology, Political Science
+major|```String```|String representation of major|Biology, Political Science
 schoolID|Integer|Unique identifier assigned to a school|3445566
 isDeleted| |Flag for soft deletion if user decides to delete account (Never returned)| |
-booksOwned|Array of Books|List of books user has|
-booksForSale|Array of Books|List of Books user has and is willing to sell|
+booksOwned|```Array of Books```|List of books user has|
+booksForSale|```Array of Books```|List of Books user has and is willing to sell|
 lastLogIn| |Time used to determine if a user is ‘inactive’ (Never returned)| | 
 
 
@@ -57,44 +57,44 @@ lastLogIn| |Time used to determine if a user is ‘inactive’ (Never returned)|
 
 Key|Value Type|Description|Example
 ---|---|---|---
-name|String|Name of Book|All Things Biology
-author|String|Author of Book|Tremont Biggs
-ISBN|String|Unique book identifier|978-3-16-148410-0
-description|String|More detailed information about the book|The publisher is McGraw-Hill, used for course BIO101.
-picture|String|Image of book|24234.png
+name|```String```|Name of Book|All Things Biology
+author|```String```|Author of Book|Tremont Biggs
+ISBN|```String```|Unique book identifier|978-3-16-148410-0
+description|```String```|More detailed information about the book|The publisher is McGraw-Hill, used for course BIO101.
+picture|```String```|Image of book|24234.png
 
 ##Listing
 
 Key|Value Type|Description|Example
 ---|---|---|---
-sellerID|Integer|ID of person selling|12
-bookID|Integer|ID of book being sold|332
-condition|String|Physical condition of the book|New, Light Use, Moderate Use, Heavy Use, Damaged
+sellerID|```Integer```|ID of person selling|12
+bookID|```Integer```|ID of book being sold|332
+condition|```String```|Physical condition of the book|New, Light Use, Moderate Use, Heavy Use, Damaged
 
 ##Transaction
 
 Key|Value Type|Description|Example
 ---|---|---|---
-boughtFrom|Integer|ID of user who sold the book|4412
-soldTo|Integer|ID of user who bought the book|4411
-bookSold|Book|Book that was sold
-amount|Float|Number of dollars book was sold for|90
-dateSoldAt|String|String representation of the time book was sold at
+boughtFrom|```Integer```|ID of user who sold the book|4412
+soldTo|```Integer```|ID of user who bought the book|4411
+bookSold|```Book```|Book that was sold
+amount|```Float```|Number of dollars book was sold for|90
+dateSoldAt|```String```|String representation of the time book was sold at
 
 ##Message
 
 Key|Value Type|Description|Example
 ---|---|---|---
-sentFrom|Integer|UserId of user message was sent from|23
-sentTo|Integer|UserId of user message was sent from|33
-message|String|Message sent|Let's meet at the student center
+sentFrom|```Integer```|UserId of user message was sent from|23
+sentTo|```Integer```|UserId of user message was sent from|33
+message|```String```|Message sent|Let's meet at the student center
 
 ##Request
 
 Key|Value Type|Description|Example
 ---|---|---|---
-userRequesting|Integer|User ID of user requesting|4
-bookRequested|Book|Book requested|
+userRequesting|```Integer|```User ID of user requesting|4
+bookRequested|```Book```|Book requested|
 
 
 
