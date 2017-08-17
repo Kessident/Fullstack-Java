@@ -45,7 +45,7 @@ email|```String```|Email used to log in/communicate|johnsmith@gmail.com
 password| |Password used to log in (Never returned)| |
 passSalt| |Pass salt used for hashing (never returned)| |
 major|```String```|String representation of major|Biology, Political Science
-schoolID|Integer|Unique identifier assigned to a school|3445566
+schoolID|```Integer```|Unique identifier assigned to a school|3445566
 isDeleted| |Flag for soft deletion if user decides to delete account (Never returned)| |
 booksOwned|```Array of Books```|List of books user has|
 booksForSale|```Array of Books```|List of Books user has and is willing to sell|
@@ -93,7 +93,7 @@ message|```String```|Message sent|Let's meet at the student center
 
 Key|Value Type|Description|Example
 ---|---|---|---
-userRequesting|```Integer|```User ID of user requesting|4
+userRequesting|```Integer```|User ID of user requesting|4
 bookRequested|```Book```|Book requested|
 
 
@@ -183,7 +183,7 @@ Delete a user|DELETE|/api/user/delete
 ### Delete a user
 #### Request
 	DELETE /api/user/delete
-###Response
+### Response
     The server will respond with 204 No Content, and no body upon success.
 	HTTP/1.1 204 No Content
 
