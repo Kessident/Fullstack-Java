@@ -1,4 +1,7 @@
 package com.CCGA.api.Repositorys;
 
-public class TransactionRepo {
+import com.CCGA.api.Models.Transaction;
+import org.springframework.data.repository.CrudRepository;
+
+public interface TransactionRepo extends CrudRepository<Transaction, Integer> {
 }
