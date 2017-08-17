@@ -18,7 +18,7 @@ public class User {
     @Column @NotNull
     private String name;
 
-    @Column @NotNull
+    @Column(unique = true) @NotNull
     private String email;
 
     @Column @NotNull
@@ -35,10 +35,10 @@ public class User {
     @Column @JsonIgnore
     private boolean isDeleted;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany//(fetch = FetchType.LAZY)
     private List<Book> booksOwned;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany//(fetch = FetchType.LAZY)
     private List<Listing> booksForSale;
 
     public User() {
