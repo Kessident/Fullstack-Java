@@ -1,38 +1,38 @@
 package com.CCGA.api.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Id
     @GeneratedValue
     private int userID;
 
-    @Column
+    @Column @NotNull
     private String name;
 
-    @Column
+    @Column @NotNull
     private String email;
 
-    @Column
-    @JsonIgnore
+    @Column @NotNull
     private String password;
 
-    @Column
     @JsonIgnore
-    private String salt;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne//(fetch = FetchType.LAZY)
     private Major major;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToOne//(fetch = FetchType.LAZY)
     private School school;
 
-    @Column
+    @Column @JsonIgnore
     private boolean isDeleted;
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -41,15 +41,13 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY)
     private List<Listing> booksForSale;
 
-
     public User() {
     }
 
-    public User(String name, String email, String password, String salt, Major major, School school, boolean isDeleted, List<Book> booksOwned, List<Listing> booksForSale) {
+    public User(String name, String email, String password, Major major, School school, boolean isDeleted, List<Book> booksOwned, List<Listing> booksForSale) {
         this.name = name;
         this.email = email;
         this.password = password;
-        this.salt = salt;
         this.major = major;
         this.school = school;
         this.isDeleted = isDeleted;
@@ -87,14 +85,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
     }
 
     public Major getMajor() {
@@ -159,7 +149,6 @@ public class User {
             ", name='" + name + '\'' +
             ", email='" + email + '\'' +
             ", password='" + password + '\'' +
-            ", salt='" + salt + '\'' +
             ", major=" + major +
             ", school=" + school +
             ", isDeleted=" + isDeleted +
