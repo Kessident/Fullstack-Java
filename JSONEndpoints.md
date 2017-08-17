@@ -1,6 +1,6 @@
-Types
+# Types
 
-All types have
+## All types have
 
 Key | Value Type    | Description                      | Example
 ---|---|---|---
@@ -8,7 +8,7 @@ ID  | ```Integer``` | Unique ID of the entity returned | 1232231568
 createdAt | ```String``` | Timestamp entity was created at | 2017-02-06T05:03:15
 updatedAt | ```String``` | Timestamp entity was last updated at | 2017-02-06T05:03:15
 
-##School
+## School
 
 Key | Value Type | Description | Example
 ---|---|---|---
@@ -16,7 +16,7 @@ name | ```String``` | Name of School | MorehouseCollege
 location | ```Location``` | Representation of the physical location of the school | AtlantaGA 
 listOfMajors | ```Array of Strings``` | List of all majors listed at School | {biology,math,etc…}
 
-##Location
+## Location
 
 Key|Value Type|Description|Example
 ---|---|---|---
@@ -29,14 +29,14 @@ zipExp|```Integer```|Postal Zip Code Exp|8949
 latitude|```Float```|Physical global location|33.75 (N is positive, S is negative; out of 60, so converts to 33N 45)
 longitude|```Float```|Physical global location|-84.38 (E is positive, W is negative; Out of 60, so converts to 84W 23  
 
-##Major
+## Major
 
 Key|Value Type|Description|Example
 ---|---|---|---
 Name|```String```|Field of Study|Biology, Math
 listOfBooks|```Array of Strings```|Books listed by major|{All Things Biology, Biochemistry, etc,..}
 
-##User
+## User
 
 Key|Value Type|Description|Example
 ---|---|---|---
@@ -45,7 +45,7 @@ email|```String```|Email used to log in/communicate|johnsmith@gmail.com
 password| |Password used to log in (Never returned)| |
 passSalt| |Pass salt used for hashing (never returned)| |
 major|```String```|String representation of major|Biology, Political Science
-schoolID|Integer|Unique identifier assigned to a school|3445566
+schoolID|```Integer```|Unique identifier assigned to a school|3445566
 isDeleted| |Flag for soft deletion if user decides to delete account (Never returned)| |
 booksOwned|```Array of Books```|List of books user has|
 booksForSale|```Array of Books```|List of Books user has and is willing to sell|
@@ -53,7 +53,7 @@ lastLogIn| |Time used to determine if a user is ‘inactive’ (Never returned)|
 
 
 
-##Book
+## Book
 
 Key|Value Type|Description|Example
 ---|---|---|---
@@ -63,7 +63,7 @@ ISBN|```String```|Unique book identifier|978-3-16-148410-0
 description|```String```|More detailed information about the book|The publisher is McGraw-Hill, used for course BIO101.
 picture|```String```|Image of book|24234.png
 
-##Listing
+## Listing
 
 Key|Value Type|Description|Example
 ---|---|---|---
@@ -71,7 +71,7 @@ sellerID|```Integer```|ID of person selling|12
 bookID|```Integer```|ID of book being sold|332
 condition|```String```|Physical condition of the book|New, Light Use, Moderate Use, Heavy Use, Damaged
 
-##Transaction
+## Transaction
 
 Key|Value Type|Description|Example
 ---|---|---|---
@@ -81,7 +81,7 @@ bookSold|```Book```|Book that was sold
 amount|```Float```|Number of dollars book was sold for|90
 dateSoldAt|```String```|String representation of the time book was sold at
 
-##Message
+## Message
 
 Key|Value Type|Description|Example
 ---|---|---|---
@@ -89,11 +89,11 @@ sentFrom|```Integer```|UserId of user message was sent from|23
 sentTo|```Integer```|UserId of user message was sent from|33
 message|```String```|Message sent|Let's meet at the student center
 
-##Request
+## Request
 
 Key|Value Type|Description|Example
 ---|---|---|---
-userRequesting|```Integer|```User ID of user requesting|4
+userRequesting|```Integer```|User ID of user requesting|4
 bookRequested|```Book```|Book requested|
 
 
@@ -103,55 +103,55 @@ bookRequested|```Book```|Book requested|
 
 
 
-#School Routes
+# School Routes
 
 Action|Method|Path
 ---|---|---
 Get a list of all schools|GET|/api/school/all
 Get a specific School|GET|/api/school/{ID}
 
-###Get a list of all Schools
-####Request
+### Get a list of all Schools
+#### Request
 	GET /api/school/all
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “schools”:  [ School ]  }
 
-###Get a School
-####Request
+### Get a School
+#### Request
 	GET /api/school/{ID}
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “school”:  School  }
 
 
-#Major Routes
+# Major Routes
 
 Action|Method|Path
 ---|---|---
 Get a list of all majors at a specific school|GET|/api/school/{ID}/major/all
 Get a specific major at a specific school|GET|/api/school/{ID}/major/{majorID}
 
-###Get a list of all majors at a specific school
-####Request
+### Get a list of all majors at a specific school
+#### Request
     GET  /api/school/{ID}/major/all
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “majors”: [ Major ] }
 
-###Get a specific major at a specific school
-####Request
+### Get a specific major at a specific school
+#### Request
 	GET /api/school/{ID}/major/{majorID}
-####Response
+#### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “major”: Major }
 
 
-#User Routes
+# User Routes
 
 Action|Method|Path
 ---|---|---
@@ -160,45 +160,45 @@ Login a user|POST|/api/user/login
 Update information for a user|PUT|/api/user/update
 Delete a user|DELETE|/api/user/delete
 
-###Register a new user
-####Request
+### Register a new user
+#### Request
     POST  /api/user/register
     { “newUser”: User }
-####Response
+#### Response
     HTTP/1.1 201 CREATED
 
-###Login a user
-####Request
+### Login a user
+#### Request
 	POST /api/user/login
-####Response
+#### Response
 	HTTP/1.1 200 OK
 
-###Update information for a user
-####Request
+### Update information for a user
+#### Request
     PUT  /api/user/update
     { “updatedUser”:  User }
-####Response
+#### Response
     HTTP/1.1 200 OK
 
-###Delete a user
-####Request
+### Delete a user
+#### Request
 	DELETE /api/user/delete
-###Response
+### Response
     The server will respond with 204 No Content, and no body upon success.
 	HTTP/1.1 204 No Content
 
 
-#Book Routes
+# Book Routes
 
 Action|Method|Path
 ---|---|---
 Lookup Book by ISBN|GET|/api/book/search/{ISBN}
 Lookup Book by other criteria|GET|/api/book/search
 
-###Lookup book by ISBN
-####Request
+### Lookup book by ISBN
+#### Request
     GET  /api/book/search/{ISBN}
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “book” : [ Book ] }
@@ -209,11 +209,11 @@ Lookup Book by other criteria|GET|/api/book/search
 	HTTP/1.1 400 Bad Request
 	Sent if invalid ISBN
 
-###Lookup book by other criteria
-###Request
+### Lookup book by other criteria
+#### Request
 	GET /api/book/search
 	{ “name”: String, “Author”: String }
-####Response
+#### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “books”: [ Book ] }
@@ -224,18 +224,18 @@ Lookup Book by other criteria|GET|/api/book/search
 	HTTP/1.1 400 Bad Request
 
 
-#Listing Routes
+# Listing Routes
 
 List a book for sale|POST|/api/listing
 ---|---|---
 Delete a listing|DELETE|/api/listing/{ID}
 Edit a listing|PUT|/api/listing/{ID}
 
-###List a book for sale
-####Request
+### List a book for sale
+#### Request
     POST  /api/listing
     { “bookID”: Integer, “amount”: Number, “condition”: String }
-####Response
+#### Response
     HTTP/1.1 201 Created
     Content-Type: application/json
     { “listing”: Listing}
@@ -245,10 +245,10 @@ Edit a listing|PUT|/api/listing/{ID}
 
     HTTP/1.1 500 Internal Server Error
 
-###Delete a Listing
-####Request
+### Delete a Listing
+#### Request
     DELETE  /api/listing/{ID}
-####Response
+#### Response
     HTTP/1.1 204 No Content
     Content-Type: application/json
 
@@ -257,11 +257,11 @@ Edit a listing|PUT|/api/listing/{ID}
 
     HTTP/1.1 500 Internal Server Error
 
-###Edit a Listing
-####Request
+### Edit a Listing
+#### Request
     PUT  /api/listing/{ID}
     { “amount”: Number, “condition”: String}
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
     { “listing”: Listing}
@@ -271,7 +271,7 @@ Edit a listing|PUT|/api/listing/{ID}
 
     HTTP/1.1 500 Internal Server Error
 
-#Transaction Routes
+# Transaction Routes
 
 Action|Method|Path
 ---|---|---
@@ -279,29 +279,29 @@ Get a list of all transactions|GET|/api/transaction/all
 Get a specific transactions|GET|/api/transaction/{ID}
 Create a new transaction|POST|/api/transaction/create
 
-###Get a list of all transactions
-####Request
+### Get a list of all transactions
+#### Request
     GET  /api/transaction/all
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “transactions” : [ Transaction ] }
 
-###Get a specific transaction
-####Request
+### Get a specific transaction
+#### Request
     GET /api/transaction/{ID}
-####Response
+#### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “transaction”: Transaction }
 
 	HTTP/1.1 203 No Content
 
-###Create a new transaction
-####Request
+### Create a new transaction
+#### Request
     POST  /api/transaction/create
     { “seller” : userID, “buyer”: userID, “bookSold”: Book, “amountSoldFor”: Float (Dollar amount)}
-####Response
+#### Response
     HTTP/1.1 201 CREATED
     Content-Type: application/json
     { “transaction”: Transaction}
@@ -311,17 +311,17 @@ Create a new transaction|POST|/api/transaction/create
     HTTP/1.1 500 Internal Server Error
 
 
-#Message Routes
+# Message Routes
 
 Action|Method|Path
 ---|---|---
 Get a list of all messages sent to/from logged in user and {userID}|GET|/api/message/{userID}/all
 Create a new message from signed in user to {userID}|POST|/api/message/{userID}/create
 
-###Get a list of all messages sent to/from logged in user and {userID}
-####Request
+### Get a list of all messages sent to/from logged in user and {userID}
+#### Request
     GET  /api/message/{userID}/all
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “messages”: [ Message] }
@@ -329,11 +329,11 @@ Create a new message from signed in user to {userID}|POST|/api/message/{userID}/
 	HTTP/1.1 204 No Content
 	Sent when either no Messages or no user with {userID}
 
-###Create a new message from signed in user to {userID}
-####Request
+### Create a new message from signed in user to {userID}
+#### Request
 	POST/api/school/{ID}/major/{majorID}
     { “message”: String }
-####Response
+#### Response
 	HTTP/1.1 201 Created
     Content-Type: application/json
 	{ “message”: Message }
@@ -343,7 +343,7 @@ Create a new message from signed in user to {userID}|POST|/api/message/{userID}/
     HTTP/1.1 500 Internal Server Error
 
 
-#Request Routes
+# Request Routes
 
 Action|Method|Path
 ---|---|---
@@ -355,22 +355,22 @@ Create a new request for a book from logged in user|POST|/api/request/create
 Edit a request a logged in user made|PUT|/api/request/edit/{ID}
 Delete a request a logged in user made|DELETE|/api/request/delete/{ID}
 
-###Get a list of all requests
-####Request
+### Get a list of all requests
+#### Request
 	GET /api/request/all/all
 	{ "getFromAll": True}
-####Response
+#### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “requests”: [Request] }
 
 	HTTP/1.1 203 No Content
 
-###Get a specific request
-####Request
+### Get a specific request
+#### Request
     GET /api/request/all/{ID}
     { "getFromAll": True}
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “request” : Request }
@@ -379,11 +379,11 @@ Delete a request a logged in user made|DELETE|/api/request/delete/{ID}
     
 	HTTP/1.1 400 Bad Request
 
-###Get a list of all requests a logged in user made
-####Request
+### Get a list of all requests a logged in user made
+#### Request
     GET /api/request/all
 	{ "getFromAll": False}
-####Response
+#### Response
     HTTP/1.1 201 CREATED
     Content-Type: application/json
 	{ “requests”: [Request] }
@@ -392,22 +392,22 @@ Delete a request a logged in user made|DELETE|/api/request/delete/{ID}
 
     HTTP/1.1 500 Internal Server Error
 
-###Get a specific request a logged in user made
-####Request
+### Get a specific request a logged in user made
+#### Request
 	GET /api/request/delete/{ID}
     { "getFromAll": False}
-####Response
+#### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “request”: Request }
 
 	HTTP/1.1 204 No Content
 
-###Create a new request for a book from logged in user
-####Request
+### Create a new request for a book from logged in user
+#### Request
     POST /api/request/create
     { Book }
-####Response
+#### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “request” : [ Request] }
@@ -416,11 +416,11 @@ Delete a request a logged in user made|DELETE|/api/request/delete/{ID}
 
 	HTTP/1.1 500 Internal Server Error
 
-###Edit a request a logged in user made
-####Request
+### Edit a request a logged in user made
+#### Request
     PUT /api/request/edit/{ID}
     { Book }
-####Response
+#### Response
     HTTP/1.1 201 CREATED
     Content-Type: application/json
     { “request”: Request}
@@ -429,10 +429,10 @@ Delete a request a logged in user made|DELETE|/api/request/delete/{ID}
 
     HTTP/1.1 500 Internal Server Error
 
-###Delete a request a logged in user made
-####Request
+### Delete a request a logged in user made
+#### Request
 	DELETE /api/request/delete/{ID}
-####Response
+#### Response
 	HTTP/1.1 204 No Content
 	
 	HTTP/1.1 400 Bad Request
