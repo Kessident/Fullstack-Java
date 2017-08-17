@@ -1,6 +1,6 @@
-Types
+# Types
 
-All types have
+## All types have
 
 Key | Value Type    | Description                      | Example
 ---|---|---|---
