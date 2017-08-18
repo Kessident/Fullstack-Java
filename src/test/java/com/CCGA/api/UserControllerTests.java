@@ -8,17 +8,12 @@ import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.SchoolRepo;
 import com.CCGA.api.Repositorys.UserRepo;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.query.Jpa21Utils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.jdbc.JdbcTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,19 +52,16 @@ public class UserControllerTests {
         users.save(user1);
     }
 
-
-    @After
-    public void deleteTable(){
-//        JdbcTestUtils.dropTables(jdbc, "");
-//        JdbcTestUtils.deleteFromTables(jdbc, "users");
-//        JdbcTestUtils.deleteFromTables(jdbc, "schools");
-//        JdbcTestUtils.deleteFromTables(jdbc, "majors");
-//        JdbcTestUtils.deleteFromTables(jdbc, "books");
-    }
-
     @Test
     public void tests(){
         User foundUser = users.findByEmail("email");
+        School school = schools.findByName("School");
+        Major major = majors.findByName("Biology");
         Assert.assertNotNull(foundUser);
+        Assert.assertEquals("Name should match", "name", "name");
+        Assert.assertEquals("email should match", "email", "email");
+        Assert.assertEquals("pass should match", "pass", "pass");
+        Assert.assertEquals(school, foundUser.getSchool());
+        Assert.assertEquals(major, foundUser.getMajor());
     }
 }
