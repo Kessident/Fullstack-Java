@@ -2,6 +2,7 @@ package com.CCGA.api.Controllers;
 
 import com.CCGA.api.Models.Book;
 import com.CCGA.api.Models.User;
+import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.SchoolRepo;
 import com.CCGA.api.Repositorys.UserRepo;
@@ -30,6 +31,9 @@ public class UserController {
     SchoolRepo schools;
     @Autowired
     MajorRepo majors;
+    @Autowired
+    BookRepo books;
+
 
     @PostMapping(value = "/register", consumes = {"application/json"})
     public ResponseEntity registerNewUser(@RequestBody String registeringUser) {
@@ -169,15 +173,33 @@ public class UserController {
     }
 
     @GetMapping("/book/{bookID}")
-    public Book getSpecificBook(){}
+    public Book getSpecificBook(@PathVariable int bookID, HttpSession session){
+        try{
+            User loggedIn = users.findOne( (int) session.getAttribute("userID"));
+            Book book = books.findOne(bookID);
+            return loggedIn.getBooksOwned().contains(book) ? book : null;
+        } catch (Exception e){
+            return null;
+        }
+    }
 
     @DeleteMapping("/book/{bookID}/delete")
-    public ResponseEntity deleteABook(){}
+    public ResponseEntity deleteABook(@PathVariable int bookID, HttpSession session){
+        try{
+            User loggedIn = users.findOne( (int) session.getAttribute("userID"));
+            Book book = books.findOne(bookID);
+            if (loggedIn.getBooksOwned().contains(book)){
+                List<Book> booksOwned = loggedIn.getBooksOwned();
+                booksOwned.remove(book);
+                loggedIn.setBooksOwned(booksOwned);
+                users.save(loggedIn);
 
-
-//    Get a list of user's books | GET | /api/user/book/all
-//    Add a book to user's collection | POST | /api/user/book/add
-//    Get a book from user's collection | GET | /api/user/book/{BookID}
-//    Delete a book from user's collection | DELETE | /api/user/book/{BookID}/delete
-
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Book successfully removed");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not have specified book in collection");
+            }
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to add a book to your collection");
+        }
+    }
 }
