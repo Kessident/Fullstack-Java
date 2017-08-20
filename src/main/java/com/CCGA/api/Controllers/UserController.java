@@ -1,6 +1,7 @@
 package com.CCGA.api.Controllers;
 
 import com.CCGA.api.Models.Book;
+import com.CCGA.api.Models.JSONResponse;
 import com.CCGA.api.Models.User;
 import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.Response;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -126,14 +128,15 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public List<User> getUsers() {
+    public ResponseEntity getUsers() {
         List<User> allUsers = new ArrayList<>();
 
         users.findAll().forEach(user -> {
             if (!user.isDeleted()){ allUsers.add(user); }
         });
 
-        return allUsers;
+        JSONResponse jsonResponse = new JSONResponse("success", allUsers);
+        return ResponseEntity.ok(jsonResponse);
     }
 
     @GetMapping("/book/all")
