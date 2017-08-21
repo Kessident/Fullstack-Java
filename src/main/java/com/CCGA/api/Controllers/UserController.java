@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.Response;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -41,14 +39,15 @@ public class UserController {
     public ResponseEntity registerNewUser(@RequestBody String registeringUser) {
         JsonNode json;
 
-        try {json = new ObjectMapper().readTree(new StringReader(registeringUser));}
-        catch (IOException e) {
+        try {
+            json = new ObjectMapper().readTree(new StringReader(registeringUser));
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
         }
 
-        if (json == null){
+        if (json == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad Request");
-        } else if (users.findByEmail(json.get("email").asText()) != null){
+        } else if (users.findByEmail(json.get("email").asText()) != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
         }
 
@@ -66,12 +65,15 @@ public class UserController {
     public ResponseEntity loginUser(@RequestBody String loginAttempt, HttpSession session) throws NotFoundException {
         JsonNode json;
 
-        try {json = new ObjectMapper().readTree(new StringReader(loginAttempt));}
-        catch (IOException e) {
+        try {
+            json = new ObjectMapper().readTree(new StringReader(loginAttempt));
+        } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
         }
 
-        if (json == null){throw new IllegalArgumentException();}
+        if (json == null) {
+            throw new IllegalArgumentException();
+        }
 
         User exists = users.findByEmail(json.get("email").asText());
 
@@ -101,7 +103,9 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
             }
 
-            if (updatedUser == null) {throw new IllegalArgumentException();}
+            if (updatedUser == null) {
+                throw new IllegalArgumentException();
+            }
             users.save(updatedUser);
             return ResponseEntity.status(HttpStatus.OK).body("User updated");
         } else {
@@ -111,7 +115,7 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity deleteUser(HttpSession session) {
-        if ( session.getAttribute("userID") != null){
+        if (session.getAttribute("userID") != null) {
             User deleted = users.findOne((int) session.getAttribute("userID"));
             deleted.setDeleted(true);
             deleted.setEmail("");
@@ -132,7 +136,9 @@ public class UserController {
         List<User> allUsers = new ArrayList<>();
 
         users.findAll().forEach(user -> {
-            if (!user.isDeleted()){ allUsers.add(user); }
+            if (!user.isDeleted()) {
+                allUsers.add(user);
+            }
         });
 
         JSONResponse jsonResponse = new JSONResponse("success", allUsers);
@@ -140,11 +146,11 @@ public class UserController {
     }
 
     @GetMapping("/book/all")
-    public JSONResponse getAllBooksOwned(HttpSession session){
-        try{
-            List<Book> bookList = users.findOne( (Integer) session.getAttribute("userID")).getBooksOwned();
+    public JSONResponse getAllBooksOwned(HttpSession session) {
+        try {
+            List<Book> bookList = users.findOne((Integer) session.getAttribute("userID")).getBooksOwned();
             return new JSONResponse("Success", bookList);
-        } catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -156,13 +162,15 @@ public class UserController {
 
             try {
                 json = new ObjectMapper().readTree(new StringReader(bookToBeAdded));
-                if (json == null) {return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad Request");}
+                if (json == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad Request");
+                }
             } catch (IOException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
             }
 
 
-            User loggedIn = users.findOne( (Integer) session.getAttribute("userID"));
+            User loggedIn = users.findOne((Integer) session.getAttribute("userID"));
             List<Book> bookList = loggedIn.getBooksOwned();
 
             Book added = books.findByName(json.get("name").asText());
@@ -179,23 +187,23 @@ public class UserController {
     }
 
     @GetMapping("/book/{bookID}")
-    public JSONResponse getSpecificBook(@PathVariable int bookID, HttpSession session){
-        try{
-            User loggedIn = users.findOne( (int) session.getAttribute("userID"));
+    public JSONResponse getSpecificBook(@PathVariable int bookID, HttpSession session) {
+        try {
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
             Book book = books.findOne(bookID);
 
             return new JSONResponse("Success", loggedIn.getBooksOwned().contains(book) ? book : null);
-        } catch (Exception e){
+        } catch (Exception e) {
             return new JSONResponse("Error", null);
         }
     }
 
     @DeleteMapping("/book/{bookID}/delete")
-    public ResponseEntity deleteABook(@PathVariable int bookID, HttpSession session){
-        try{
-            User loggedIn = users.findOne( (int) session.getAttribute("userID"));
+    public ResponseEntity deleteABook(@PathVariable int bookID, HttpSession session) {
+        try {
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
             Book book = books.findOne(bookID);
-            if (loggedIn.getBooksOwned().contains(book)){
+            if (loggedIn.getBooksOwned().contains(book)) {
                 List<Book> booksOwned = loggedIn.getBooksOwned();
                 booksOwned.remove(book);
                 loggedIn.setBooksOwned(booksOwned);
@@ -205,7 +213,7 @@ public class UserController {
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not have specified book in collection");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a book from your collection");
         }
     }
