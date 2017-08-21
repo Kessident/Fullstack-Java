@@ -385,7 +385,7 @@ Create a new message from signed in user to {userID}|POST|/api/message/{userID}/
 
 ### Create a new message from signed in user to {userID}
 #### Request
-	POST/api/school/{ID}/major/{majorID}
+	POST/api/message/{userID}/create
     { “message”: String }
 #### Response
 	HTTP/1.1 201 Created
