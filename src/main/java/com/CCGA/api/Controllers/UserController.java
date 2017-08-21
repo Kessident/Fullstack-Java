@@ -179,11 +179,12 @@ public class UserController {
     }
 
     @GetMapping("/book/{bookID}")
-    public Book getSpecificBook(@PathVariable int bookID, HttpSession session){
+    public JSONResponse getSpecificBook(@PathVariable int bookID, HttpSession session){
         try{
             User loggedIn = users.findOne( (int) session.getAttribute("userID"));
             Book book = books.findOne(bookID);
-            return loggedIn.getBooksOwned().contains(book) ? book : null;
+
+            return new JSONResponse("Success", loggedIn.getBooksOwned().contains(book) ? book : null);
         } catch (Exception e){
             return null;
         }
