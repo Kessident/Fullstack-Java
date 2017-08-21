@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController("/api/message")
+@RestController
+
+@RequestMapping("/api/message")
 public class MessageController {
 
     @Autowired
@@ -38,7 +41,7 @@ public class MessageController {
         JsonNode messageJSON;
 
         try {
-            messageJSON = new ObjectMapper().readTree(messageString);
+            messageJSON = new ObjectMapper().readTree(new StringReader(messageString));
             if (messageJSON == null){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new JSONResponse("Error reading message", null));

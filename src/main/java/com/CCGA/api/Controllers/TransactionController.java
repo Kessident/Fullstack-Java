@@ -15,10 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController("/api/transaction")
+@RestController
+@RequestMapping("/api/transaction")
 public class TransactionController {
 
     @Autowired
@@ -46,7 +48,7 @@ public class TransactionController {
         JsonNode transactionAsJson;
 
         try {
-            transactionAsJson = new ObjectMapper().readTree(transactionAsString);
+            transactionAsJson = new ObjectMapper().readTree(new StringReader(transactionAsString));
             if (transactionAsJson == null) {
                 throw new IOException();
             }

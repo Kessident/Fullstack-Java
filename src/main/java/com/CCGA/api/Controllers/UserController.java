@@ -175,7 +175,7 @@ public class UserController {
 
             Book added = books.findByIsbn(json.get("isbn").asText());
             bookList.add(added);
-//            bookList.add(new ObjectMapper().readValue(json.asText(), Book.class));
+
             loggedIn.setBooksOwned(bookList);
 
             users.save(loggedIn);
