@@ -1,5 +1,6 @@
 package com.CCGA.api.Controllers;
 
+import com.CCGA.api.Models.JSONResponse;
 import com.CCGA.api.Models.School;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.SchoolRepo;
@@ -19,21 +20,20 @@ public class SchoolController {
     MajorRepo majors;
 
     @GetMapping("/all")
-    public List<School> getAllSchools(){
+    public JSONResponse getAllSchools() {
         List<School> schoolList = new ArrayList<>();
         schools.findAll().forEach(schoolList::add);
 
-        return schoolList;
+        return new JSONResponse("Success", schoolList);
     }
 
     @GetMapping("{ID}")
-    public School getASchool(@RequestParam int schoolID){
-        return schools.findOne(schoolID);
+    public JSONResponse getASchool(@RequestParam int schoolID) {
+        return new JSONResponse("Success", schools.findOne(schoolID));
     }
 
     @PostMapping("/create")
     public void createSchool(@RequestBody School school) {
-        System.out.println(school);
         majors.save(school.getMajorsOffered());
         schools.save(school);
     }
