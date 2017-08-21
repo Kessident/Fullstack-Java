@@ -21,7 +21,7 @@ public class User {
     @Column(unique = true) @NotNull
     private String email;
 
-    @Column @NotNull
+    @Column @NotNull @JsonIgnore
     private String password;
 
     @JsonIgnore

@@ -153,6 +153,9 @@ public class UserController {
         if (session.getAttribute("userID") != null) {
             JsonNode json;
 
+            System.out.println("156 " + bookToBeAdded);
+
+
             try {
                 json = new ObjectMapper().readTree(new StringReader(bookToBeAdded));
                 if (json == null) {return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad Request");}
@@ -164,7 +167,9 @@ public class UserController {
             User loggedIn = users.findOne( (Integer) session.getAttribute("userID"));
             List<Book> bookList = loggedIn.getBooksOwned();
 
-            bookList.add(new ObjectMapper().readValue(json.asText(), Book.class));
+            Book added = books.findByName(json.get("name").asText());
+            bookList.add(added);
+//            bookList.add(new ObjectMapper().readValue(json.asText(), Book.class));
             loggedIn.setBooksOwned(bookList);
 
             users.save(loggedIn);
@@ -202,7 +207,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not have specified book in collection");
             }
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to add a book to your collection");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a book from your collection");
         }
     }
 }
