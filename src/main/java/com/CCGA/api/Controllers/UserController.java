@@ -140,9 +140,10 @@ public class UserController {
     }
 
     @GetMapping("/book/all")
-    public List<Book> getAllBooksOwned(HttpSession session){
+    public JSONResponse getAllBooksOwned(HttpSession session){
         try{
-            return users.findOne( (Integer) session.getAttribute("userID")).getBooksOwned();
+            List<Book> bookList = users.findOne( (Integer) session.getAttribute("userID")).getBooksOwned();
+            return new JSONResponse("Success", bookList);
         } catch (Exception e){
             return null;
         }
@@ -152,9 +153,6 @@ public class UserController {
     public ResponseEntity addABookToCollection(@RequestBody String bookToBeAdded, HttpSession session) throws IOException {
         if (session.getAttribute("userID") != null) {
             JsonNode json;
-
-            System.out.println("156 " + bookToBeAdded);
-
 
             try {
                 json = new ObjectMapper().readTree(new StringReader(bookToBeAdded));

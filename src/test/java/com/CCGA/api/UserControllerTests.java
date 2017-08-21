@@ -79,7 +79,7 @@ public class UserControllerTests {
 
 
         get("/api/user/all").then().body("message", equalTo("success"));
-        System.out.println("\n\n--------------Testing Books--------------\n");
+        System.out.println("\n\n--------------Testing Books--------------");
 
 
         Major belongsTo = majors.findByName("Biology");
@@ -92,18 +92,16 @@ public class UserControllerTests {
         loginInfo.put("email", "email");
         loginInfo.put("password", "pass");
 
-        given()
+        String sessionID = given()
             .contentType(JSON)
             .body(loginInfo)
             .when()
             .post("/api/user/login")
             .then()
-            .statusCode(200);
+            .statusCode(200)
+        .extract().sessionId();
 
         System.out.println("\nCan login\n");
-
-
-        String sessionID = given().contentType(JSON).body(loginInfo).when().post("/api/user/login").sessionId();
 
         Map<String, Object> jsonBook = new HashMap<>();
         jsonBook.put("name", "bookName");
@@ -117,6 +115,7 @@ public class UserControllerTests {
             .then()
             .body(equalTo("Successfully added book to collection"));
 
+        System.out.println("\nCan Successfully add a book to collection\n");
 
         Book exists = books.findByName("bookName");
         given()
@@ -124,8 +123,8 @@ public class UserControllerTests {
             .when()
             .get("/api/user/book/all")
             .then()
-            .body(equalTo("[{\"bookID\":4,\"name\":\"bookName\",\"author\":\"bookAuthor\",\"isbn\":\"1234567890\",\"description\":\"This is a description for book1\",\"picture\":\"Path to pictures of book\",\"major\":{\"majorID\":1,\"name\":\"Biology\"}}]"));
+            .body("data.name", hasItems(exists.getName()));
 
-        System.out.println("\nCan get list of books after logging in (should be empty)\n");
+        System.out.println("\nCan get list of books after logging in (only one)\n");
     }
 }
