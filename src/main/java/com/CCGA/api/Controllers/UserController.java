@@ -186,7 +186,7 @@ public class UserController {
 
             return new JSONResponse("Success", loggedIn.getBooksOwned().contains(book) ? book : null);
         } catch (Exception e){
-            return null;
+            return new JSONResponse("Error", null);
         }
     }
 
