@@ -16,7 +16,7 @@ public class Book {
     private String author;
 
     @Column
-    private String ISBN;
+    private String isbn;
 
     @Column
     private String description;
@@ -30,10 +30,10 @@ public class Book {
     public Book() {
     }
 
-    public Book(String name, String author, String ISBN, String description, String picture, Major major) {
+    public Book(String name, String author, String isbn, String description, String picture, Major major) {
         this.name = name;
         this.author = author;
-        this.ISBN = ISBN;
+        this.isbn = isbn;
         this.description = description;
         this.picture = picture;
         this.major = major;
@@ -63,12 +63,12 @@ public class Book {
         this.author = author;
     }
 
-    public String getISBN() {
-        return ISBN;
+    public String getisbn() {
+        return isbn;
     }
 
-    public void setISBN(String ISBN) {
-        this.ISBN = ISBN;
+    public void setisbn(String isbn) {
+        this.isbn = isbn;
     }
 
     public String getDescription() {
@@ -116,7 +116,7 @@ public class Book {
             "bookID=" + bookID +
             ", name='" + name + '\'' +
             ", author='" + author + '\'' +
-            ", ISBN='" + ISBN + '\'' +
+            ", isbn='" + isbn + '\'' +
             ", description='" + description + '\'' +
             ", picture='" + picture + '\'' +
             '}';

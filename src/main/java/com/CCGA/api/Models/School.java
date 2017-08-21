@@ -10,7 +10,7 @@ public class School {
     @GeneratedValue
     private int schoolID;
 
-    @Column
+    @Column(unique = true)
     private String name;
 
     @Column

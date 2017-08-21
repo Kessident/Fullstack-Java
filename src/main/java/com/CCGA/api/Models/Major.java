@@ -10,7 +10,7 @@ public class Major {
     @GeneratedValue
     private int majorID;
 
-    @Column
+    @Column(unique = true)
     private String name;
 
     public Major() {

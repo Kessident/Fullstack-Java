@@ -159,19 +159,27 @@ Register a new user|POST|/api/user/register
 Login a user|POST|/api/user/login
 Update information for a user|PUT|/api/user/update
 Delete a user|DELETE|/api/user/delete
+Get a list of user's books | GET | /api/user/book/all
+Add a book to user's collection | POST | /api/user/book/add
+Get a book from user's collection | GET | /api/user/book/{BookID}
+Delete a book from user's collection | DELETE | /api/user/book/{BookID}/delete
 
 ### Register a new user
 #### Request
     POST  /api/user/register
     { “newUser”: User }
 #### Response
-    HTTP/1.1 201 CREATED
+    HTTP/1.1 201 Created
+    
+    HTTP/1.1 400 Bad Request
 
 ### Login a user
 #### Request
 	POST /api/user/login
 #### Response
 	HTTP/1.1 200 OK
+	
+	HTTP/1.1 400 Bad Request
 
 ### Update information for a user
 #### Request
@@ -180,13 +188,59 @@ Delete a user|DELETE|/api/user/delete
 #### Response
     HTTP/1.1 200 OK
 
+    HTTP/1.1 401 Unauthorized
+    
 ### Delete a user
 #### Request
 	DELETE /api/user/delete
 ### Response
     The server will respond with 204 No Content, and no body upon success.
 	HTTP/1.1 204 No Content
+    
+    HTTP/1.1 401 Unauthorized
 
+### Get a list of user's books
+#### Request
+    GET | /api/user/book/all
+#### Response
+    HTTP/1.1 200 OK
+    Content-Type: application/json
+    { “books” : [ Book ] }
+
+    HTTP/1.1 204 No Content
+    Sent if user has no books
+    
+    HTTP/1.1 401 Unauthorized
+    
+### Add a book to user's collection
+#### Request
+    POST | /api/user/book/add
+    { Book }
+#### Response
+    HTTP/1.1 201 Created
+    
+    HTTP/1.1 400 Bad Request
+    
+    HTTP/1.1 401 Unauthorized
+    
+### Get a book from user's collection
+#### Request
+    GET | /api/user/book/{BookID}
+#### Response
+    HTTP/1.1 200 OK
+    { "Book": Book }
+    
+    HTTP/1.1 204 No Content
+    
+    HTTP/1.1 401 Unauthorized
+    
+### Delete a book from user's collection
+#### Request
+    DELETE | /api/user/book/{BookID}/delete
+#### Response
+    HTTP/1.1 204 No Content
+    
+    HTTP/1.1 401 Unauthorized
 
 # Book Routes
 
@@ -201,7 +255,7 @@ Lookup Book by other criteria|GET|/api/book/search
 #### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
-	{ “book” : [ Book ] }
+	{ “book” : Book }
 
     HTTP/1.1 204 No Content
 	Sent if valid ISBN, but no book found
