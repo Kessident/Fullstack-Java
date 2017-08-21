@@ -78,7 +78,7 @@ Key|Value Type|Description|Example
 boughtFrom|```Integer```|ID of user who sold the book|4412
 soldTo|```Integer```|ID of user who bought the book|4411
 bookSold|```Book```|Book that was sold
-amount|```Float```|Number of dollars book was sold for|90
+amount|```Long```|Number of dollars book was sold for|90
 dateSoldAt|```String```|String representation of the time book was sold at
 
 ## Message
@@ -354,7 +354,7 @@ Create a new transaction|POST|/api/transaction/create
 ### Create a new transaction
 #### Request
     POST  /api/transaction/create
-    { “seller” : userID, “buyer”: userID, “bookSold”: Book, “amountSoldFor”: Float (Dollar amount)}
+    { “sellerID” : userID, “buyerID”: userID, “bookSold”: BookID, “amountSoldFor”: Long (Dollar amount)}
 #### Response
     HTTP/1.1 201 CREATED
     Content-Type: application/json
