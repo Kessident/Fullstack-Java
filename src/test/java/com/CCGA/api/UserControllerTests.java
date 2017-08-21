@@ -63,7 +63,7 @@ public class UserControllerTests {
     }
 
     @Test
-    public void testCanSave() {
+    public void userControllerTests() {
         User foundUser = users.findByEmail("email");
         School school = schools.findByName("School");
         Major major = majors.findByName("Biology");
@@ -101,7 +101,7 @@ public class UserControllerTests {
         System.out.println("\nCan login\n");
 
         Map<String, Object> jsonBook = new HashMap<>();
-        jsonBook.put("name", "bookName");
+        jsonBook.put("isbn", "1234567890");
 
         given()
             .sessionId(sessionID)
@@ -112,16 +112,25 @@ public class UserControllerTests {
             .then()
             .body(equalTo("Successfully added book to collection"));
 
-        System.out.println("\nCan Successfully add a book to collection\n");
+        System.out.println("\nCan Successfully add a book (by isbn) to collection\n");
 
-        Book exists = books.findByName("bookName");
+        Book exists = books.findByIsbn("1234567890");
         given()
             .sessionId(sessionID)
             .when()
             .get("/api/user/book/all")
             .then()
-            .body("data.name", hasItems(exists.getName()));
+            .body("data.isbn", hasItems(exists.getisbn()));
 
         System.out.println("\nCan get list of books after logging in (only one)\n");
+
+        given()
+            .sessionId(sessionID)
+            .when()
+            .delete("/api/user/delete")
+            .then()
+            .statusCode(204);
+
+        System.out.println("\nCan delete self\n");
     }
 }

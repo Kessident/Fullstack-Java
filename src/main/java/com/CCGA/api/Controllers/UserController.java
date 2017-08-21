@@ -173,7 +173,7 @@ public class UserController {
             User loggedIn = users.findOne((Integer) session.getAttribute("userID"));
             List<Book> bookList = loggedIn.getBooksOwned();
 
-            Book added = books.findByName(json.get("name").asText());
+            Book added = books.findByIsbn(json.get("isbn").asText());
             bookList.add(added);
 //            bookList.add(new ObjectMapper().readValue(json.asText(), Book.class));
             loggedIn.setBooksOwned(bookList);
