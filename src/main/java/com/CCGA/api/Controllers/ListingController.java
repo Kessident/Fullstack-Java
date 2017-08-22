@@ -23,7 +23,7 @@ public class ListingController {
     ListingRepo listings;
 
     @GetMapping("/booksforsale")
-    public JSONResponse getAllBooksForSale(HttpSession session) {
+    public JSONResponse getAllBooksForSale() {
         try {
             Iterable<Listing> bookList = listings.findAll();
             return new JSONResponse("Success", bookList);
