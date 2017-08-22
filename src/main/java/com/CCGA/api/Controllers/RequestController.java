@@ -25,7 +25,7 @@ public class RequestController {
     //post a request
     @PostMapping("/createbook")
     public void createBookRequest(@RequestBody Request request) {
-        requests.save();
+        requests.save(request);
     }
 
     //see all requests
@@ -37,16 +37,10 @@ public class RequestController {
         return requestsList;
     }
 
-    //update a request by requestid
-    @PostMapping("/update/{requestID}")
-    public void updateBookRequest(@PathVariable int requestID){
-        requests.save();
-    }
-
     //delete a request by requestid
     @DeleteMapping("/delete/{requestID}")
     public void deleteARequest(@PathVariable int requestID) {
-       requests.remove();
+        requests.delete(requestID);
     }
 
 
