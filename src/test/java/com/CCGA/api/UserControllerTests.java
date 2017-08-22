@@ -26,7 +26,6 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UserControllerTests {
-    private boolean setUpComplete = false;
     @Autowired
     UserRepo users;
     @Autowired
@@ -40,9 +39,6 @@ public class UserControllerTests {
 
     @Before
     public void setUp() {
-        if (setUpComplete){
-            return;
-        }
         User user1 = new User();
         Major major1 = new Major("Biology");
         majors.save(major1);
@@ -59,7 +55,6 @@ public class UserControllerTests {
         user1.setMajor(major1);
         user1.setSchool(school1);
         users.save(user1);
-        setUpComplete = true;
     }
 
     @Test
