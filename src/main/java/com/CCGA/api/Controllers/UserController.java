@@ -82,10 +82,10 @@ public class UserController {
                 session.setAttribute("userID", exists.getUserID());
                 return ResponseEntity.status(HttpStatus.OK).body("Successfully logged in");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username/password combination");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password combination");
             }
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username/password combination");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password combination");
         }
     }
 
@@ -129,6 +129,12 @@ public class UserController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a user");
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity logout(HttpSession session){
+        session.invalidate();
+        return ResponseEntity.status(200).body("Logged out successfully");
     }
 
     @GetMapping("/all")
