@@ -82,10 +82,10 @@ public class UserController {
                 session.setAttribute("userID", exists.getUserID());
                 return ResponseEntity.status(HttpStatus.OK).body("Successfully logged in");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username/password combination");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password combination");
             }
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username/password combination");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password combination");
         }
     }
 
@@ -131,6 +131,12 @@ public class UserController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity logout(HttpSession session){
+        session.invalidate();
+        return ResponseEntity.status(200).body("Logged out successfully");
+    }
+
     @GetMapping("/all")
     public ResponseEntity getUsers() {
         List<User> allUsers = new ArrayList<>();
@@ -143,78 +149,5 @@ public class UserController {
 
         JSONResponse jsonResponse = new JSONResponse("success", allUsers);
         return ResponseEntity.ok(jsonResponse);
-    }
-
-    @GetMapping("/book/all")
-    public JSONResponse getAllBooksOwned(HttpSession session) {
-        try {
-            List<Book> bookList = users.findOne((Integer) session.getAttribute("userID")).getBooksOwned();
-            return new JSONResponse("Success", bookList);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    @PostMapping("/book/add")
-    public ResponseEntity addABookToCollection(@RequestBody String bookToBeAdded, HttpSession session) throws IOException {
-        if (session.getAttribute("userID") != null) {
-            JsonNode json;
-
-            try {
-                json = new ObjectMapper().readTree(new StringReader(bookToBeAdded));
-                if (json == null) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad Request");
-                }
-            } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
-            }
-
-
-            User loggedIn = users.findOne((Integer) session.getAttribute("userID"));
-            List<Book> bookList = loggedIn.getBooksOwned();
-
-            Book added = books.findByName(json.get("name").asText());
-            bookList.add(added);
-//            bookList.add(new ObjectMapper().readValue(json.asText(), Book.class));
-            loggedIn.setBooksOwned(bookList);
-
-            users.save(loggedIn);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body("Successfully added book to collection");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to add a book to your collection");
-        }
-    }
-
-    @GetMapping("/book/{bookID}")
-    public JSONResponse getSpecificBook(@PathVariable int bookID, HttpSession session) {
-        try {
-            User loggedIn = users.findOne((int) session.getAttribute("userID"));
-            Book book = books.findOne(bookID);
-
-            return new JSONResponse("Success", loggedIn.getBooksOwned().contains(book) ? book : null);
-        } catch (Exception e) {
-            return new JSONResponse("Error", null);
-        }
-    }
-
-    @DeleteMapping("/book/{bookID}/delete")
-    public ResponseEntity deleteABook(@PathVariable int bookID, HttpSession session) {
-        try {
-            User loggedIn = users.findOne((int) session.getAttribute("userID"));
-            Book book = books.findOne(bookID);
-            if (loggedIn.getBooksOwned().contains(book)) {
-                List<Book> booksOwned = loggedIn.getBooksOwned();
-                booksOwned.remove(book);
-                loggedIn.setBooksOwned(booksOwned);
-                users.save(loggedIn);
-
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Book successfully removed");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not have specified book in collection");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a book from your collection");
-        }
     }
 }
