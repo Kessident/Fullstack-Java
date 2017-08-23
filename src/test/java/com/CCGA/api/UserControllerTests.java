@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -37,28 +38,10 @@ public class UserControllerTests {
     @Autowired
     JdbcTemplate jdbc;
 
-    @Before
-    public void setUp() {
-        User user1 = new User();
-        Major major1 = new Major("Biology");
-        majors.save(major1);
-
-        List<Major> majorList = new ArrayList<>();
-        majorList.add(major1);
-
-        School school1 = new School("School", new Location(1, "street", "city", "state", 11111, 1111, new Float(1), new Float(1)), majorList);
-        schools.save(school1);
-
-        user1.setName("name");
-        user1.setEmail("email");
-        user1.setPassword("pass");
-        user1.setMajor(major1);
-        user1.setSchool(school1);
-        users.save(user1);
-    }
-
     @Test
     public void userControllerTests() {
+        setUp();
+
         User foundUser = users.findByEmail("email");
         School school = schools.findByName("School");
         Major major = majors.findByName("Biology");
@@ -71,13 +54,6 @@ public class UserControllerTests {
 
 
         get("/api/user/all").then().body("message", equalTo("success"));
-        System.out.println("\n\n--------------Testing Books--------------");
-
-
-        Major belongsTo = majors.findByName("Biology");
-        Book book1 = new Book("bookName", "bookAuthor", "1234567890", "This is a description for book1", "Path to pictures of book", belongsTo);
-
-        books.save(book1);
 
 
         Map<String, Object> loginInfo = new HashMap<>();
@@ -95,30 +71,6 @@ public class UserControllerTests {
 
         System.out.println("\nCan login\n");
 
-        Map<String, Object> jsonBook = new HashMap<>();
-        jsonBook.put("isbn", "1234567890");
-
-        given()
-            .sessionId(sessionID)
-            .contentType(JSON)
-            .body(jsonBook)
-            .when()
-            .post("/api/user/book/add")
-            .then()
-            .body(equalTo("Successfully added book to collection"));
-
-        System.out.println("\nCan Successfully add a book (by isbn) to collection\n");
-
-        Book exists = books.findByIsbn("1234567890");
-        given()
-            .sessionId(sessionID)
-            .when()
-            .get("/api/user/book/all")
-            .then()
-            .body("data.isbn", hasItems(exists.getisbn()));
-
-        System.out.println("\nCan get list of books after logging in (only one)\n");
-
         given()
             .sessionId(sessionID)
             .when()
@@ -127,5 +79,36 @@ public class UserControllerTests {
             .statusCode(204);
 
         System.out.println("\nCan delete self\n");
+
+        given().sessionId(sessionID).post("/api/user/logout");
+
+        System.out.println("\nCan logout\n");
+
+        given()
+            .contentType(JSON).body(loginInfo)
+            .post("/api/user/login").then()
+            .statusCode(401)
+            .body(equalTo("Invalid username/password combination"));
+
+        System.out.println("\nShould not be able to login after deleting self\n");
+    }
+
+    private void setUp(){
+        User user1 = new User();
+        Major major1 = new Major("Biology");
+        majors.save(major1);
+
+        List<Major> majorList = new ArrayList<>();
+        majorList.add(major1);
+
+        School school1 = new School("School", new Location(1, "street", "city", "state", 11111, 1111, new Float(1), new Float(1)), majorList);
+        schools.save(school1);
+
+        user1.setName("name");
+        user1.setEmail("email");
+        user1.setPassword("pass");
+        user1.setMajor(major1);
+        user1.setSchool(school1);
+        users.save(user1);
     }
 }
