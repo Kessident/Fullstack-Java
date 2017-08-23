@@ -38,29 +38,10 @@ public class UserControllerTests {
     @Autowired
     JdbcTemplate jdbc;
 
-    @Before
-//    @Rollback
-    public void setUp() {
-        User user1 = new User();
-        Major major1 = new Major("Biology");
-        majors.save(major1);
-
-        List<Major> majorList = new ArrayList<>();
-        majorList.add(major1);
-
-        School school1 = new School("School", new Location(1, "street", "city", "state", 11111, 1111, new Float(1), new Float(1)), majorList);
-        schools.save(school1);
-
-        user1.setName("name");
-        user1.setEmail("email");
-        user1.setPassword("pass");
-        user1.setMajor(major1);
-        user1.setSchool(school1);
-        users.save(user1);
-    }
-
     @Test
     public void userControllerTests() {
+        setUp();
+
         User foundUser = users.findByEmail("email");
         School school = schools.findByName("School");
         Major major = majors.findByName("Biology");
@@ -110,5 +91,24 @@ public class UserControllerTests {
             .body(equalTo("Invalid username/password combination"));
 
         System.out.println("\nShould not be able to login after deleting self\n");
+    }
+
+    private void setUp(){
+        User user1 = new User();
+        Major major1 = new Major("Biology");
+        majors.save(major1);
+
+        List<Major> majorList = new ArrayList<>();
+        majorList.add(major1);
+
+        School school1 = new School("School", new Location(1, "street", "city", "state", 11111, 1111, new Float(1), new Float(1)), majorList);
+        schools.save(school1);
+
+        user1.setName("name");
+        user1.setEmail("email");
+        user1.setPassword("pass");
+        user1.setMajor(major1);
+        user1.setSchool(school1);
+        users.save(user1);
     }
 }
