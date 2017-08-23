@@ -1,6 +1,5 @@
 package com.CCGA.api.Controllers;
 
-import com.CCGA.api.Models.Book;
 import com.CCGA.api.Models.JSONResponse;
 import com.CCGA.api.Models.User;
 import com.CCGA.api.Repositorys.BookRepo;
@@ -125,7 +124,7 @@ public class UserController {
             deleted.setBooksOwned(null);
             deleted.setBooksForSale(null);
             users.save(deleted);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.status(HttpStatus.OK).body("User deleted");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a user");
         }

@@ -5,13 +5,11 @@ import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.SchoolRepo;
 import com.CCGA.api.Repositorys.UserRepo;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -60,22 +58,15 @@ public class UserControllerTests {
         loginInfo.put("email", "email");
         loginInfo.put("password", "pass");
 
-        String sessionID = given()
-            .contentType(JSON)
-            .body(loginInfo)
-            .when()
-            .post("/api/user/login")
-            .then()
+        String sessionID = given().contentType(JSON).body(loginInfo)
+            .post("/api/user/login").then()
             .statusCode(200)
-        .extract().sessionId();
+            .extract().sessionId();
 
         System.out.println("\nCan login\n");
 
-        given()
-            .sessionId(sessionID)
-            .when()
-            .delete("/api/user/delete")
-            .then()
+        given().sessionId(sessionID)
+            .delete("/api/user/delete").then()
             .statusCode(204);
 
         System.out.println("\nCan delete self\n");
@@ -84,8 +75,7 @@ public class UserControllerTests {
 
         System.out.println("\nCan logout\n");
 
-        given()
-            .contentType(JSON).body(loginInfo)
+        given().contentType(JSON).body(loginInfo)
             .post("/api/user/login").then()
             .statusCode(401)
             .body(equalTo("Invalid username/password combination"));
