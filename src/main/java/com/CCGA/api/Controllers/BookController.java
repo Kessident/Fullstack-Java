@@ -30,6 +30,7 @@ public class BookController {
     public ResponseEntity getAllBooksOwned(HttpSession session) {
         try {
             List<Book> bookList = users.findOne((Integer) session.getAttribute("userID")).getBooksOwned();
+            System.out.println(bookList);
             return ResponseEntity.status(200).body(new JSONResponse("Success", bookList));
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error fetching books");
@@ -64,14 +65,14 @@ public class BookController {
     }
 
     @GetMapping("/owned/{bookID}")
-    public JSONResponse getSpecificBook(@PathVariable int bookID, HttpSession session) {
+    public ResponseEntity getSpecificBook(@PathVariable int bookID, HttpSession session) {
         try {
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
             Book book = books.findOne(bookID);
 
-            return new JSONResponse("Success", loggedIn.getBooksOwned().contains(book) ? book : null);
+            return ResponseEntity.status(200).body(new JSONResponse("Success", loggedIn.getBooksOwned().contains(book) ? book : null));
         } catch (Exception e) {
-            return new JSONResponse("Error", null);
+            return ResponseEntity.status(500).body(new JSONResponse("Error", null));
         }
     }
 
@@ -86,7 +87,7 @@ public class BookController {
                 loggedIn.setBooksOwned(booksOwned);
                 users.save(loggedIn);
 
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Book successfully removed");
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not have specified book in collection");
             }
@@ -108,7 +109,8 @@ public class BookController {
         if (json.get("isbn") != null){
             Book book = books.findByIsbn(json.get("isbn").asText());
             if (book == null){
-                // TODO: 8/22/17 Book Search API
+                // TODO: 8/23/17 Probably change this to specify people should submit missing book info 
+                return ResponseEntity.status(404).body("Book does not exist in our server");
             } else {
                 return ResponseEntity.status(200).body(new JSONResponse("Book Found", book));
             }
@@ -116,12 +118,24 @@ public class BookController {
         } else if (json.get("name") != null){
             Book book = books.findByName(json.get("name").asText());
             if (book == null){
-                // TODO: 8/22/17 Book Search API
+                // TODO: 8/23/17 Probably change this to specify people should submit missing book info
+                return ResponseEntity.status(404).body("Book does not exist in our server");
             } else {
                 return ResponseEntity.status(200).body(new JSONResponse("Book Found", book));
             }
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide an ISBN or name to search for");
+    }
+
+    @GetMapping("/search/{isbn}")
+    public ResponseEntity searchBookByISBN(@PathVariable String isbn){
+        Book book = books.findByIsbn(isbn);
+        if (book == null){
+            // TODO: 8/23/17 Probably change this to specify people should submit missing book info
+            return ResponseEntity.status(404).body("Book does not exist in our server");
+        } else {
+            return ResponseEntity.status(200).body(new JSONResponse("Book Found", book));
+        }
     }
 
 
