@@ -10,7 +10,7 @@ import com.CCGA.api.Repositorys.UserRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,13 +34,13 @@ public class TransactionController {
     public ResponseEntity getAllTransactions() {
         List<Transaction> allTransactions = new ArrayList<>();
         transactions.findAll().forEach(allTransactions::add);
-        return ResponseEntity.status(200).body(new JSONResponse("success", allTransactions));
+        return ResponseEntity.status(OK).body(new JSONResponse("success", allTransactions));
     }
 
     @GetMapping("/{transID}")
     public ResponseEntity getSpecificTransaction(@PathVariable int transID) {
         Transaction transaction = transactions.findOne(transID);
-        return ResponseEntity.status(200).body(new JSONResponse("success", transaction));
+        return ResponseEntity.status(OK).body(new JSONResponse("success", transaction));
     }
 
     @PostMapping("/create")
@@ -53,7 +53,7 @@ public class TransactionController {
                 throw new IOException();
             }
         } catch (IOException ex) {
-            return ResponseEntity.status(500).body(new JSONResponse("Error", "Error Processing JSON request"));
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error", "Error Processing JSON request"));
         }
 
         Transaction newTrans = new Transaction();
@@ -67,12 +67,12 @@ public class TransactionController {
             newTrans.setBookSold(bookSold);
             newTrans.setAmountSoldFor(transactionAsJson.get("amountSoldFor").asLong());
         } catch (Exception e) {
-            return ResponseEntity.status(400).body(new JSONResponse("Error", "Error reading properties from JSON, Ensure all fields are properly spelled/present and try again"));
+            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error", "Error reading properties from JSON, Ensure all fields are properly spelled/present and try again"));
         }
 
         transactions.save(newTrans);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new JSONResponse("success", newTrans));
+        return ResponseEntity.status(CREATED).body(new JSONResponse("success", newTrans));
     }
 
 }

@@ -5,7 +5,7 @@ import com.CCGA.api.Repositorys.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +31,9 @@ public class ListingController {
     public ResponseEntity getAllBooksForSale() {
         try {
             Iterable<Listing> bookList = listings.findAll();
-            return ResponseEntity.status(HttpStatus.OK).body(new JSONResponse("Success", bookList));
+            return ResponseEntity.status(OK).body(new JSONResponse("Success", bookList));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -41,9 +41,9 @@ public class ListingController {
     public ResponseEntity getASpecificListing(@PathVariable int listingID){
         Listing found = listings.findOne(listingID);
         if (found == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No listing with that ID found");
+            return ResponseEntity.status(NOT_FOUND).body("No listing with that ID found");
         } else {
-            return ResponseEntity.status(HttpStatus.OK).body(new JSONResponse("Success", found));
+            return ResponseEntity.status(OK).body(new JSONResponse("Success", found));
         }
     }
 
@@ -54,10 +54,10 @@ public class ListingController {
             try {
                 json = processJSON(ListingAsString);
                 if (json.get("bookID") == null || json.get("amount") == null || json.get("condition") == null){
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provided all required fields");
+                    return ResponseEntity.status(BAD_REQUEST).body("Please provided all required fields");
                 }
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
+                return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
             }
 
             User loggedIn = users.findOne((int)session.getAttribute("userID"));
@@ -70,15 +70,15 @@ public class ListingController {
             try {
                 loggedIn.addListing(newListing);
             } catch (IllegalArgumentException e){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not own that book");
+                return ResponseEntity.status(BAD_REQUEST).body("User does not own that book");
             }
 
             users.save(loggedIn);
             listings.save(newListing);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("Listing created");
+            return ResponseEntity.status(CREATED).body("Listing created");
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to create a listing");
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to create a listing");
         }
     }
 
@@ -89,17 +89,17 @@ public class ListingController {
             Listing foundListing =listings.findOne(listingID);
 
             if (foundListing == null){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Listing with that ID not found");
+                return ResponseEntity.status(NOT_FOUND).body("Listing with that ID not found");
             }
             if (loggedIn.getBooksForSale().contains(foundListing)){
                 loggedIn.removeListing(foundListing);
                 users.save(loggedIn);
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                return ResponseEntity.status(NO_CONTENT).build();
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Listing was not created by this user");
+                return ResponseEntity.status(UNAUTHORIZED).body("Listing was not created by this user");
             }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a listing");
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to delete a listing");
         }
     }
 
@@ -115,7 +115,7 @@ public class ListingController {
             try {
                 json = processJSON(editedListing);
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
+                return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
             }
 
             if (json.get("amount") != null) {
@@ -126,12 +126,12 @@ public class ListingController {
             }
 
             listings.save(foundListing);
-            return ResponseEntity.status(HttpStatus.OK).body(new JSONResponse("Listing updated", foundListing));
+            return ResponseEntity.status(OK).body(new JSONResponse("Listing updated", foundListing));
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Listing was not created by this user");
+                return ResponseEntity.status(UNAUTHORIZED).body("Listing was not created by this user");
             }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to edit a listing");
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to edit a listing");
         }
     }
 

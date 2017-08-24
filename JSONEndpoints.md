@@ -139,6 +139,7 @@ Get a specific School|GET|/api/school/{ID}
     { School }
 #### Response
     HTTP/1.1 201 Created
+    { "data": School }
     
 ## Major Routes
 
@@ -247,7 +248,7 @@ Lookup Book by either ISBN or name|GET|/api/book/search
 #### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
-    { “books” : [ Book ] }
+    { “data” : [ Book ] }
 
     HTTP/1.1 404 No Content
     Sent if user has no books
@@ -259,7 +260,7 @@ Lookup Book by either ISBN or name|GET|/api/book/search
     GET | /api/user/book/owned/{BookID}
 #### Response
     HTTP/1.1 200 OK
-    { "Book": Book }
+    { "data": Book }
     
     HTTP/1.1 404 Not Found
     
@@ -268,9 +269,10 @@ Lookup Book by either ISBN or name|GET|/api/book/search
 ### Add a book to collection | POST | /api/book/owned/add
 #### Request
     POST | /api/user/book/add
-    { "data" : Book }
+    { "isbn" : String }
 #### Response
     HTTP/1.1 201 Created
+    { "data": Book }
     
     HTTP/1.1 400 Bad Request
     
@@ -346,7 +348,7 @@ Edit a listing | PUT | /api/listing/{listingID}
 #### Response
     HTTP/1.1 201 Created
     Content-Type: application/json
-    { “listing”: Listing}
+    { “data”: Listing}
 
     HTTP/1.1 400 Bad Request
     Sent if user does not have book in collection
@@ -372,7 +374,7 @@ Edit a listing | PUT | /api/listing/{listingID}
 #### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
-    { “listing”: Listing}
+    { “data”: Listing}
 
     HTTP/1.1 401 Unauthorized
     Sent if listing with that ID is not associated with logged in user or usr not logged in
