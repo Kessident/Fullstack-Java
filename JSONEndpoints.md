@@ -317,6 +317,7 @@ Lookup Book by either ISBN or name|GET|/api/book/search
 
 ## Listing Routes
 
+Action|Method|Path
 ---|---|---
 Get a list of all listings | GET | /api/listing/all
 Get a specific listing | GET | /api/listing/{listingID}
@@ -324,14 +325,14 @@ List a book for sale | POST | /api/listing/create
 Delete a listing | DELETE | /api/listing/{listingID}
 Edit a listing | PUT | /api/listing/{listingID}
 
-### Get a list of all listings | GET | /api/listing/all
+### Get a list of all listings
 #### Request
     GET /api/listing/all
 #### Response
     HTTP/1.1 200 OK
     { "data": [ Listing] }
     
-### Get a specific listing | GET | /api/listing/{listingID}
+### Get a specific listing
 #### Request
     GET /api/listing/{listingID}
 #### Response
