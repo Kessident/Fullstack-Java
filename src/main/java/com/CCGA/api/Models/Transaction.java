@@ -3,6 +3,7 @@ package com.CCGA.api.Models;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transactions")
@@ -23,7 +24,15 @@ public class Transaction {
     @Column
     private long amountSoldFor;
 
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
+
     public Transaction() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public Transaction(User seller, User buyer, Book bookSold, long amountSoldFor) {
@@ -31,6 +40,8 @@ public class Transaction {
         this.buyer = buyer;
         this.bookSold = bookSold;
         this.amountSoldFor = amountSoldFor;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public int getTransactionID() {
@@ -71,6 +82,22 @@ public class Transaction {
 
     public void setAmountSoldFor(long amountSoldFor) {
         this.amountSoldFor = amountSoldFor;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

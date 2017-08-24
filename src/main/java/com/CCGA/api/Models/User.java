@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -25,23 +26,31 @@ public class User {
     private String password;
 
     @JsonIgnore
-    @OneToOne//(fetch = FetchType.LAZY)
+    @OneToOne
     private Major major;
 
     @JsonIgnore
-    @OneToOne//(fetch = FetchType.LAZY)
+    @OneToOne
     private School school;
 
     @Column @JsonIgnore
     private boolean isDeleted;
 
-    @OneToMany//(fetch = FetchType.LAZY)
+    @OneToMany
     private List<Book> booksOwned;
 
-    @OneToMany//(fetch = FetchType.LAZY)
+    @OneToMany
     private List<Listing> booksForSale;
 
+    @Column
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
+
     public User() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public User(String name, String email, String password, Major major, School school, boolean isDeleted, List<Book> booksOwned, List<Listing> booksForSale) {
@@ -53,6 +62,8 @@ public class User {
         this.isDeleted = isDeleted;
         this.booksOwned = booksOwned;
         this.booksForSale = booksForSale;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public int getUserID() {
@@ -125,6 +136,42 @@ public class User {
 
     public void setBooksForSale(List<Listing> booksForSale) {
         this.booksForSale = booksForSale;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public void addListing(Listing listing){
+        if (booksOwned.contains(listing.getOffered())){
+            booksForSale.add(listing);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void addBook(Book newBook){
+        booksOwned.add(newBook);
+    }
+
+    public void removeListing(Listing listing){
+        booksForSale.remove(listing);
+    }
+
+    public void removeBookOwned(Book book){
+        booksOwned.remove(book);
     }
 
     @Override

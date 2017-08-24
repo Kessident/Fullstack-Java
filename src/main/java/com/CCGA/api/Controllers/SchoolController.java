@@ -5,6 +5,8 @@ import com.CCGA.api.Models.School;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.SchoolRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import static org.springframework.http.HttpStatus.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,21 +22,22 @@ public class SchoolController {
     MajorRepo majors;
 
     @GetMapping("/all")
-    public JSONResponse getAllSchools() {
+    public ResponseEntity getAllSchools() {
         List<School> schoolList = new ArrayList<>();
         schools.findAll().forEach(schoolList::add);
 
-        return new JSONResponse("Success", schoolList);
+        return ResponseEntity.status(OK).body(new JSONResponse("Success", schoolList));
     }
 
     @GetMapping("{ID}")
-    public JSONResponse getASchool(@RequestParam int schoolID) {
-        return new JSONResponse("Success", schools.findOne(schoolID));
+    public ResponseEntity getASchool(@RequestParam int schoolID) {
+        return ResponseEntity.status(OK).body(new JSONResponse("Success", schools.findOne(schoolID)));
     }
 
     @PostMapping("/create")
-    public void createSchool(@RequestBody School school) {
+    public ResponseEntity createSchool(@RequestBody School school) {
         majors.save(school.getMajorsOffered());
         schools.save(school);
+        return ResponseEntity.status(CREATED).body(new JSONResponse("School created", school));
     }
 }

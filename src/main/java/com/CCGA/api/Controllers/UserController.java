@@ -1,7 +1,8 @@
 package com.CCGA.api.Controllers;
 
-import com.CCGA.api.Models.Book;
 import com.CCGA.api.Models.JSONResponse;
+import com.CCGA.api.Models.Major;
+import com.CCGA.api.Models.School;
 import com.CCGA.api.Models.User;
 import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
@@ -13,11 +14,13 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +57,7 @@ public class UserController {
         User newUser = new User();
         newUser.setName(json.get("name").asText());
         newUser.setEmail(json.get("email").asText());
-        newUser.setPassword(json.get("password").asText());
+        newUser.setPassword(BCrypt.hashpw(json.get("password").asText(), BCrypt.gensalt()));
         newUser.setSchool(schools.findOne(json.get("schoolID").asInt()));
         newUser.setMajor(majors.findOne(json.get("majorID").asInt()));
         users.save(newUser);
@@ -78,8 +81,12 @@ public class UserController {
         User exists = users.findByEmail(json.get("email").asText());
 
         if (exists != null && !exists.isDeleted()) {
-            if (json.get("password").asText().equals(exists.getPassword())) {
+            if (BCrypt.checkpw(json.get("password").asText(), exists.getPassword())) {
                 session.setAttribute("userID", exists.getUserID());
+
+                exists.setUpdatedAt(LocalDateTime.now());
+                users.save(exists);
+
                 return ResponseEntity.status(HttpStatus.OK).body("Successfully logged in");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password combination");
@@ -94,19 +101,30 @@ public class UserController {
         if (session.getAttribute("userID") != null) {
 
             JsonNode json;
-            User updatedUser;
 
             try {
                 json = new ObjectMapper().readTree(new StringReader(updatedUserString));
-                updatedUser = new ObjectMapper().treeToValue(json, User.class);
             } catch (IOException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
             }
 
-            if (updatedUser == null) {
-                throw new IllegalArgumentException();
+            if (json == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No data sent");
             }
-            users.save(updatedUser);
+
+            User tobeUpdated = users.findOne((int) session.getAttribute("userID"));
+            if (json.get("name") != null){
+                tobeUpdated.setName(json.get("name").asText());
+            }
+            if (json.get("schoolID") != null){
+                tobeUpdated.setSchool(schools.findOne(json.get("schoolID").asInt()));
+            }
+            if (json.get("majorID") != null){
+                tobeUpdated.setMajor(majors.findOne(json.get("majorID").asInt()));
+            }
+
+            tobeUpdated.setUpdatedAt(LocalDateTime.now());
+            users.save(tobeUpdated);
             return ResponseEntity.status(HttpStatus.OK).body("User updated");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to update a user");
@@ -124,15 +142,16 @@ public class UserController {
             deleted.setSchool(null);
             deleted.setBooksOwned(null);
             deleted.setBooksForSale(null);
+            deleted.setUpdatedAt(LocalDateTime.now());
             users.save(deleted);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            return ResponseEntity.status(HttpStatus.OK).body("User deleted");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a user");
         }
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(HttpSession session){
+    public ResponseEntity logout(HttpSession session) {
         session.invalidate();
         return ResponseEntity.status(200).body("Logged out successfully");
     }

@@ -8,7 +8,7 @@ import com.CCGA.api.Repositorys.UserRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +29,11 @@ public class MessageController {
     UserRepo users;
 
     @GetMapping("{userID}/all")
-    public JSONResponse getAllMessagesFromUser(@PathVariable int userID, HttpSession session){
+    public ResponseEntity getAllMessagesFromUser(@PathVariable int userID, HttpSession session){
         User loggedIn = users.findOne((int)session.getAttribute("UserID"));
-        User messagesAbout = users.findOne(userID);
-        List<Message> allMessages = messages.findAllBySentFromAndSentTo(loggedIn, messagesAbout);
-        return new JSONResponse("Success", allMessages);
+        User sentTo = users.findOne(userID);
+        List<Message> allMessages = messages.findAllBySentFromAndSentTo(loggedIn, sentTo);
+        return ResponseEntity.status(OK).body(new JSONResponse("Success", allMessages));
     }
 
     @PostMapping("{userID}/create")
@@ -43,11 +43,11 @@ public class MessageController {
         try {
             messageJSON = new ObjectMapper().readTree(new StringReader(messageString));
             if (messageJSON == null){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                return ResponseEntity.status(BAD_REQUEST)
                     .body(new JSONResponse("Error reading message", null));
             }
         } catch (IOException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            return ResponseEntity.status(BAD_REQUEST)
                 .body(new JSONResponse("Error reading message", null));
         }
 
@@ -58,7 +58,7 @@ public class MessageController {
 
         messages.save(newMessage);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity.status(CREATED)
             .body(new JSONResponse("success", newMessage));
     }
 
@@ -71,7 +71,7 @@ public class MessageController {
 
         allMessages.forEach(msg -> allContacts.add(msg.getSentTo()));
 
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(OK)
             .body(new JSONResponse("success", allContacts));
     }
 

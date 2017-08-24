@@ -4,7 +4,7 @@ import com.CCGA.api.Models.JSONResponse;
 import com.CCGA.api.Models.Major;
 import com.CCGA.api.Repositorys.MajorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,21 +19,21 @@ public class MajorController {
     MajorRepo majors;
 
     @GetMapping("/all")
-    public JSONResponse getAllMajors(){
+    public ResponseEntity getAllMajors(){
         List<Major> majorList = new ArrayList<>();
         majors.findAll().forEach(majorList::add);
 
-        return new JSONResponse("Success", majorList);
+        return ResponseEntity.status(OK).body(new JSONResponse("Success", majorList));
     }
 
-    @GetMapping("{ID}")
-    public JSONResponse getAMajor(@RequestParam int majorID){
-        return new JSONResponse("Success", majors.findOne(majorID));
+    @GetMapping("/{majorID}")
+    public ResponseEntity getAMajor(@RequestParam int majorID){
+        return ResponseEntity.status(OK).body(new JSONResponse("Success", majors.findOne(majorID)));
     }
 
     @PostMapping("/create")
     public ResponseEntity createMajor(@RequestBody Major major) {
         majors.save(major);
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(CREATED).build();
     }
 }
