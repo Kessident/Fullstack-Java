@@ -468,44 +468,39 @@ Get a list of users signed in user has messaged | GET | /api/message/contacts
 Action|Method|Path
 ---|---|---
 Get a list of all requests|GET|/api/request/all/
-Get a specific request|GET|/api/request/{ID}
-Get a list of all requests a logged in user made|GET|/api/request/all
-Get a specific request a logged in user made|GET|/api/request/{ID}
+Get a specific request|GET|/api/request/{requestID}
+Get a list of all requests a logged in user made|GET|/api/request/mine/all
+Get a specific request a logged in user made|GET|/api/request/mine/{requestID}
 Create a new request for a book from logged in user|POST|/api/request/create
-Delete a request a logged in user made|DELETE|/api/request/delete/{ID}
+Delete a request a logged in user made|DELETE|/api/request/delete/{requestID}
 
 ### Get a list of all requests
 #### Request
-	GET /api/request/all/all
-	{ "getFromAll": True}
+	GET /api/request/all/
 #### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
-	{ “requests”: [Request] }
+	{ “data”: [ Request ] }
 
 	HTTP/1.1 404 Not Found
 
 ### Get a specific request
 #### Request
-    GET /api/request/all/{ID}
-    { "getFromAll": True}
+    GET /api/request/all/{requestID}
 #### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
-	{ “request” : Request }
+	{ “data” : Request }
 
     HTTP/1.1 404 Not Found
-    
-	HTTP/1.1 400 Bad Request
 
 ### Get a list of all requests a logged in user made
 #### Request
-    GET /api/request/all
-	{ "getFromAll": False}
+    GET /api/request/mine
 #### Response
     HTTP/1.1 201 CREATED
     Content-Type: application/json
-	{ “requests”: [Request] }
+	{ “data”: [Request] }
 
     HTTP/1.1 400 Bad Request
 
@@ -513,23 +508,22 @@ Delete a request a logged in user made|DELETE|/api/request/delete/{ID}
 
 ### Get a specific request a logged in user made
 #### Request
-	GET /api/request/delete/{ID}
-    { "getFromAll": False}
+	GET /api/request/mine/{requestID}
 #### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
-	{ “request”: Request }
+	{ “data”: Request }
 
 	HTTP/1.1 404 Not Found
 
 ### Create a new request for a book from logged in user
 #### Request
     POST /api/request/create
-    { Book }
+    { "bookID": Integer }
 #### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
-	{ “request” : [ Request] }
+	{ “data” : [ Request] }
 
 	HTTP/1.1 400 Bad Request
 
@@ -537,7 +531,7 @@ Delete a request a logged in user made|DELETE|/api/request/delete/{ID}
 
 ### Delete a request a logged in user made
 #### Request
-	DELETE /api/request/delete/{ID}
+	DELETE /api/request/delete/{requestID}
 #### Response
 	HTTP/1.1 204 No Content
 	
