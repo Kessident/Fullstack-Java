@@ -1,7 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -21,22 +21,22 @@ public class School {
     private List<Major> majorsOffered;
 
     @Column
-    private LocalTime createdAt;
+    private LocalDateTime createdAt;
 
     @Column
-    private LocalTime updatedAt;
+    private LocalDateTime updatedAt;
 
     public School() {
-        createdAt = LocalTime.now();
-        updatedAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public School(String name, Location location, List<Major> majorsOffered) {
         this.name = name;
         this.location = location;
         this.majorsOffered = majorsOffered;
-        createdAt = LocalTime.now();
-        updatedAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public int getSchoolID() {
@@ -71,19 +71,19 @@ public class School {
         this.majorsOffered = majorsOffered;
     }
 
-    public LocalTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalTime createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalTime getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalTime updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 

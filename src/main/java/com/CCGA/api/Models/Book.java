@@ -22,6 +22,7 @@ public class Book {
     @Column
     private String description;
 
+    //Base-64 encoded string of book picture
     @Column
     private String picture;
 

@@ -1,7 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ratings")
@@ -21,22 +21,22 @@ public class Rating {
     private User issuer;
 
     @Column
-    private LocalTime createdAt;
+    private LocalDateTime createdAt;
 
     @Column
-    private LocalTime updatedAt;
+    private LocalDateTime updatedAt;
 
     public Rating() {
-        createdAt = LocalTime.now();
-        updatedAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public Rating(User about, double rating, User issuer) {
         this.about = about;
         this.rating = rating;
         this.issuer = issuer;
-        createdAt = LocalTime.now();
-        updatedAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public int getRatingID() {
@@ -71,19 +71,19 @@ public class Rating {
         this.issuer = issuer;
     }
 
-    public LocalTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalTime createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalTime getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalTime updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 

@@ -1,7 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "listings")
@@ -19,23 +19,28 @@ public class Listing {
     @Column
     private long askingPrice;
 
+    //Base-64 encoded string of book picture
     @Column
-    private LocalTime createdAt;
+    private String picture;
 
     @Column
-    private LocalTime updatedAt;
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime updatedAt;
 
     public Listing() {
-        createdAt = LocalTime.now();
-        updatedAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
-    public Listing(Book offered, Condition condition, long askingPrice) {
+    public Listing(Book offered, Condition condition, long askingPrice, String picture) {
         this.offered = offered;
         this.condition = condition;
         this.askingPrice = askingPrice;
-        createdAt = LocalTime.now();
-        updatedAt = LocalTime.now();
+        this.picture = picture;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public int getListingID() {
@@ -70,19 +75,27 @@ public class Listing {
         this.askingPrice = askingPrice;
     }
 
-    public LocalTime getCreatedAt() {
+    public String getPicture() {
+        return picture;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalTime createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalTime getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalTime updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
