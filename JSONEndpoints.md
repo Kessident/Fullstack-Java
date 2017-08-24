@@ -316,14 +316,20 @@ Lookup Book by either ISBN or name|GET|/api/book/search
 ## Listing Routes
 
 ---|---|---
-List a book for sale|POST|/api/listing
-Delete a listing|DELETE|/api/listing/{ID}
-Edit a listing|PUT|/api/listing/{ID}
+Get a list of all listings | GET | /api/listing/all
+Get a specific listing | GET | /api/listing/{listingID}
+List a book for sale | POST | /api/listing/create
+Delete a listing | DELETE | /api/listing/{listingID}
+Edit a listing | PUT | /api/listing/{listingID}
+
+## Get a list of all listings | GET | /api/listing/all
+## Get a specific listing | GET | /api/listing/{listingID}
+
 
 ### List a book for sale
 #### Request
     POST  /api/listing
-    { “bookID”: Integer, “amount”: Number, “condition”: String }
+    { “bookID”: Integer, “amount”: Number, “condition”: String, "picture":String(base64 encoded) }
 #### Response
     HTTP/1.1 201 Created
     Content-Type: application/json
@@ -336,7 +342,7 @@ Edit a listing|PUT|/api/listing/{ID}
 
 ### Delete a Listing
 #### Request
-    DELETE  /api/listing/{ID}
+    DELETE  /api/listing/{listingID}
 #### Response
     HTTP/1.1 204 No Content
     Content-Type: application/json
@@ -348,7 +354,7 @@ Edit a listing|PUT|/api/listing/{ID}
 
 ### Edit a Listing
 #### Request
-    PUT  /api/listing/{ID}
+    PUT  /api/listing/{listingID}
     { “amount”: Number, “condition”: String}
 #### Response
     HTTP/1.1 200 OK

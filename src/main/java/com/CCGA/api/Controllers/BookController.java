@@ -53,12 +53,8 @@ public class BookController {
             }
 
             User loggedIn = users.findOne((Integer) session.getAttribute("userID"));
-            List<Book> bookList = loggedIn.getBooksOwned();
-
             Book added = books.findByIsbn(json.get("isbn").asText());
-            bookList.add(added);
-
-            loggedIn.setBooksOwned(bookList);
+            loggedIn.addBook(added);
 
             users.save(loggedIn);
 
@@ -89,10 +85,10 @@ public class BookController {
         try {
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
             Book book = books.findOne(bookID);
+
             if (loggedIn.getBooksOwned().contains(book)) {
-                List<Book> booksOwned = loggedIn.getBooksOwned();
-                booksOwned.remove(book);
-                loggedIn.setBooksOwned(booksOwned);
+
+                loggedIn.removeBookOwned(book);
                 users.save(loggedIn);
 
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

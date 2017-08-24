@@ -154,6 +154,22 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
+    public void addListing(Listing listing){
+        booksForSale.add(listing);
+    }
+
+    public void addBook(Book newBook){
+        booksOwned.add(newBook);
+    }
+
+    public void removeListing(Listing listing){
+        booksForSale.remove(listing);
+    }
+
+    public void removeBookOwned(Book book){
+        booksOwned.remove(book);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
