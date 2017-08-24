@@ -186,7 +186,7 @@ Delete a book from user's collection | DELETE | /api/user/book/{BookID}/delete
 ### Register a new user
 #### Request
     POST  /api/user/register
-    { “newUser”: User }
+    { “name”: String, "email": String, "password": String, "schoolID": Integer, "majorID": Integer  }
 #### Response
     HTTP/1.1 201 Created
     
@@ -195,17 +195,21 @@ Delete a book from user's collection | DELETE | /api/user/book/{BookID}/delete
 ### Login a user
 #### Request
 	POST /api/user/login
+	{ "email": String, "password": String}
 #### Response
 	HTTP/1.1 200 OK
 	
-	HTTP/1.1 400 Bad Request
+	HTTP/1.1 401 UNAUTHORIZED
 
 ### Update information for a user
 #### Request
+    All parameters are optional, only ones wanting to be updated should be sent
     PUT  /api/user/update
-    { “updatedUser”:  User }
+    { “name”:  String, "schoolID": Integer, "majorID": Integer }
 #### Response
     HTTP/1.1 200 OK
+    
+    HTTP/1.1 400 Bad Request
 
     HTTP/1.1 401 Unauthorized
     
@@ -217,6 +221,12 @@ Delete a book from user's collection | DELETE | /api/user/book/{BookID}/delete
 	HTTP/1.1 204 No Content
     
     HTTP/1.1 401 Unauthorized
+    
+### Logout
+#### Request
+    GET /api/user/logout
+#### Response
+    HTTP/1.1 200 OK
 
 
 

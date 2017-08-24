@@ -1,6 +1,8 @@
 package com.CCGA.api.Controllers;
 
 import com.CCGA.api.Models.JSONResponse;
+import com.CCGA.api.Models.Major;
+import com.CCGA.api.Models.School;
 import com.CCGA.api.Models.User;
 import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.StringReader;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,21 +101,30 @@ public class UserController {
         if (session.getAttribute("userID") != null) {
 
             JsonNode json;
-            User updatedUser;
 
             try {
                 json = new ObjectMapper().readTree(new StringReader(updatedUserString));
-                updatedUser = new ObjectMapper().treeToValue(json, User.class);
             } catch (IOException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
             }
 
-            if (updatedUser == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
+            if (json == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No data sent");
             }
 
-            updatedUser.setUpdatedAt(LocalDateTime.now());
-            users.save(updatedUser);
+            User tobeUpdated = users.findOne((int) session.getAttribute("userID"));
+            if (json.get("name") != null){
+                tobeUpdated.setName(json.get("name").asText());
+            }
+            if (json.get("schoolID") != null){
+                tobeUpdated.setSchool(schools.findOne(json.get("schoolID").asInt()));
+            }
+            if (json.get("majorID") != null){
+                tobeUpdated.setMajor(majors.findOne(json.get("majorID").asInt()));
+            }
+
+            tobeUpdated.setUpdatedAt(LocalDateTime.now());
+            users.save(tobeUpdated);
             return ResponseEntity.status(HttpStatus.OK).body("User updated");
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to update a user");
