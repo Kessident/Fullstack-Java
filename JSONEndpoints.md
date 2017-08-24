@@ -26,8 +26,8 @@ city|```String```|Name of city|Atlanta
 state|```String```|Name of State|Georgia
 zipCode|```Integer```|Postal Zip Code|30303
 zipExp|```Integer```|Postal Zip Code Exp|8949
-latitude|```Float```|Physical global location|33.75 (N is positive, S is negative; out of 60, so converts to 33N 45)
-longitude|```Float```|Physical global location|-84.38 (E is positive, W is negative; Out of 60, so converts to 84W 23  
+latitude|```Float```|Physical global location|33.75 (N is positive, S is negative; out of 60, converts to 33N 45)
+longitude|```Float```|Physical global location|-84.38 (E is positive, W is negative; Out of 60, converts to 84W 23  
 
 ## Major
 
@@ -108,7 +108,7 @@ rating | ```Number``` | rating of `issuer`'s interaction with `about` |
 Key | Value Type | Description | Example
 ---|---|---|---
 message  | ```String``` | message | "success", "failure", "You must be logged in to do that"
-data | ```Object``` | Location of any data that is returned |
+data | ```Object``` | any data that is returned  |
 
 ## School Routes
 
