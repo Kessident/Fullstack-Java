@@ -155,7 +155,11 @@ public class User {
     }
 
     public void addListing(Listing listing){
-        booksForSale.add(listing);
+        if (booksOwned.contains(listing.getOffered())){
+            booksForSale.add(listing);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void addBook(Book newBook){

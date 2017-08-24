@@ -322,9 +322,22 @@ List a book for sale | POST | /api/listing/create
 Delete a listing | DELETE | /api/listing/{listingID}
 Edit a listing | PUT | /api/listing/{listingID}
 
-## Get a list of all listings | GET | /api/listing/all
-## Get a specific listing | GET | /api/listing/{listingID}
-
+### Get a list of all listings | GET | /api/listing/all
+#### Request
+    GET /api/listing/all
+#### Response
+    HTTP/1.1 200 OK
+    { "data": [ Listing] }
+    
+### Get a specific listing | GET | /api/listing/{listingID}
+#### Request
+    GET /api/listing/{listingID}
+#### Response
+    HTTP/1.1 200 OK
+    { "data": Listing }
+    
+    HTTP/1.1 404 Not Found
+    { "No listing with that ID found" }
 
 ### List a book for sale
 #### Request
@@ -361,8 +374,11 @@ Edit a listing | PUT | /api/listing/{listingID}
     Content-Type: application/json
     { “listing”: Listing}
 
-    HTTP/1.1 400 Bad Request
-    Sent if listing with that ID does not exist, if listing with that ID is not associated with logged in user, or if  missing information
+    HTTP/1.1 401 Unauthorized
+    Sent if listing with that ID is not associated with logged in user or usr not logged in
+    
+    HTTP/1.1 404 Bad Request
+    Sent if listing with that ID does not exist
 
     HTTP/1.1 500 Internal Server Error
 

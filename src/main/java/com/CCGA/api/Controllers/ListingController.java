@@ -28,12 +28,12 @@ public class ListingController {
     SchoolRepo schools;
 
     @GetMapping("/all")
-    public JSONResponse getAllBooksForSale() {
+    public ResponseEntity getAllBooksForSale() {
         try {
             Iterable<Listing> bookList = listings.findAll();
-            return new JSONResponse("Success", bookList);
+            return ResponseEntity.status(HttpStatus.OK).body(new JSONResponse("Success", bookList));
         } catch (Exception e) {
-            return null;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -67,7 +67,11 @@ public class ListingController {
             String picture = json.get("picture").asText();
 
             Listing newListing = new Listing(toBeListed, condition, amount, picture);
-            loggedIn.addListing(newListing);
+            try {
+                loggedIn.addListing(newListing);
+            } catch (IllegalArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not own that book");
+            }
 
             users.save(loggedIn);
             listings.save(newListing);
@@ -122,7 +126,7 @@ public class ListingController {
             }
 
             listings.save(foundListing);
-            return ResponseEntity.status(HttpStatus.OK).body("Listing updated");
+            return ResponseEntity.status(HttpStatus.OK).body(new JSONResponse("Listing updated", foundListing));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Listing was not created by this user");
             }
