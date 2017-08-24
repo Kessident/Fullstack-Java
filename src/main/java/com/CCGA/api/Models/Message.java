@@ -1,6 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "messages")
@@ -18,13 +19,23 @@ public class Message {
     @Column
     private String message;
 
+    @Column
+    private LocalTime createdAt;
+
+    @Column
+    private LocalTime updatedAt;
+
     public Message() {
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public Message(User sentFrom, User sentTo, String message) {
         this.sentFrom = sentFrom;
         this.sentTo = sentTo;
         this.message = message;
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public int getMessageID() {
@@ -57,6 +68,22 @@ public class Message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public LocalTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,8 +104,10 @@ public class UserController {
             }
 
             if (updatedUser == null) {
-                throw new IllegalArgumentException();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
             }
+
+            updatedUser.setUpdatedAt(LocalTime.now());
             users.save(updatedUser);
             return ResponseEntity.status(HttpStatus.OK).body("User updated");
         } else {
@@ -123,6 +126,7 @@ public class UserController {
             deleted.setSchool(null);
             deleted.setBooksOwned(null);
             deleted.setBooksForSale(null);
+            deleted.setUpdatedAt(LocalTime.now());
             users.save(deleted);
             return ResponseEntity.status(HttpStatus.OK).body("User deleted");
         } else {

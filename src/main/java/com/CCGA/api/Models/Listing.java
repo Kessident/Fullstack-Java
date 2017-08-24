@@ -1,6 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "listings")
@@ -18,13 +19,23 @@ public class Listing {
     @Column
     private long askingPrice;
 
+    @Column
+    private LocalTime createdAt;
+
+    @Column
+    private LocalTime updatedAt;
+
     public Listing() {
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public Listing(Book offered, Condition condition, long askingPrice) {
         this.offered = offered;
         this.condition = condition;
         this.askingPrice = askingPrice;
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public int getListingID() {
@@ -57,6 +68,22 @@ public class Listing {
 
     public void setAskingPrice(long askingPrice) {
         this.askingPrice = askingPrice;
+    }
+
+    public LocalTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

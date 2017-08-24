@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -41,7 +42,15 @@ public class User {
     @OneToMany//(fetch = FetchType.LAZY)
     private List<Listing> booksForSale;
 
+    @Column
+    private LocalTime createdAt;
+
+    @Column
+    private LocalTime updatedAt;
+
     public User() {
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public User(String name, String email, String password, Major major, School school, boolean isDeleted, List<Book> booksOwned, List<Listing> booksForSale) {
@@ -53,6 +62,8 @@ public class User {
         this.isDeleted = isDeleted;
         this.booksOwned = booksOwned;
         this.booksForSale = booksForSale;
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public int getUserID() {
@@ -125,6 +136,22 @@ public class User {
 
     public void setBooksForSale(List<Listing> booksForSale) {
         this.booksForSale = booksForSale;
+    }
+
+    public LocalTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

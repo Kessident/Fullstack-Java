@@ -1,6 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "majors")
@@ -13,11 +14,21 @@ public class Major {
     @Column(unique = true)
     private String name;
 
+    @Column
+    private LocalTime createdAt;
+
+    @Column
+    private LocalTime updatedAt;
+
     public Major() {
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public Major(String name) {
         this.name = name;
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public int getMajorID() {
@@ -34,6 +45,22 @@ public class Major {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public LocalTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

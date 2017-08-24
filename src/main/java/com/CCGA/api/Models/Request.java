@@ -1,6 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 
 @Entity
 @Table(name ="requests")
@@ -15,12 +16,22 @@ public class Request {
     @OneToOne
     private User userRequested;
 
+    @Column
+    private LocalTime createdAt;
+
+    @Column
+    private LocalTime updatedAt;
+
     public Request() {
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public Request(Book bookRequested, User userRequested) {
         this.bookRequested = bookRequested;
         this.userRequested = userRequested;
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public int getRequestID() {
@@ -45,6 +56,22 @@ public class Request {
 
     public void setUserRequested(User userRequested) {
         this.userRequested = userRequested;
+    }
+
+    public LocalTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

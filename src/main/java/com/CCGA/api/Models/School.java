@@ -1,6 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -19,13 +20,23 @@ public class School {
     @OneToMany
     private List<Major> majorsOffered;
 
+    @Column
+    private LocalTime createdAt;
+
+    @Column
+    private LocalTime updatedAt;
+
     public School() {
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public School(String name, Location location, List<Major> majorsOffered) {
         this.name = name;
         this.location = location;
         this.majorsOffered = majorsOffered;
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public int getSchoolID() {
@@ -58,6 +69,22 @@ public class School {
 
     public void setMajorsOffered(List<Major> majorsOffered) {
         this.majorsOffered = majorsOffered;
+    }
+
+    public LocalTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.CCGA.api.Models;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "books")
@@ -27,7 +28,15 @@ public class Book {
     @OneToOne
     private Major major;
 
+    @Column
+    private LocalTime createdAt;
+
+    @Column
+    private LocalTime updatedAt;
+
     public Book() {
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public Book(String name, String author, String isbn, String description, String picture, Major major) {
@@ -37,6 +46,8 @@ public class Book {
         this.description = description;
         this.picture = picture;
         this.major = major;
+        createdAt = LocalTime.now();
+        updatedAt = LocalTime.now();
     }
 
     public int getBookID() {
@@ -63,11 +74,11 @@ public class Book {
         this.author = author;
     }
 
-    public String getisbn() {
+    public String getIsbn() {
         return isbn;
     }
 
-    public void setisbn(String isbn) {
+    public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
 
@@ -93,6 +104,22 @@ public class Book {
 
     public void setMajor(Major major) {
         this.major = major;
+    }
+
+    public LocalTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
