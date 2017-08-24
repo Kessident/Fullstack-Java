@@ -147,6 +147,7 @@ Action|Method|Path
 ---|---|---
 Get a list of all majors |GET|/api/major/all
 Get a specific major |GET|/api/major/{majorID}
+Create a major | POST | /api/major/create
 
 ### Get a list of all majors
 #### Request
@@ -156,7 +157,7 @@ Get a specific major |GET|/api/major/{majorID}
     Content-Type: application/json
 	{ “data”: [ Major ] }
 
-### Get a specific major at a specific school
+### Get a specific major
 #### Request
 	GET /api/major/{majorID}
 #### Response
@@ -179,10 +180,7 @@ Register a new user|POST|/api/user/register
 Login a user|POST|/api/user/login
 Update information for a user|PUT|/api/user/update
 Delete a user|DELETE|/api/user/delete
-Get a list of user's books | GET | /api/user/book/all
-Add a book to user's collection | POST | /api/user/book/add
-Get a book from user's collection | GET | /api/user/book/{BookID}
-Delete a book from user's collection | DELETE | /api/user/book/{BookID}/delete
+Logout a user | GET | /api/user/logout
 
 ### Register a new user
 #### Request
@@ -230,7 +228,6 @@ Delete a book from user's collection | DELETE | /api/user/book/{BookID}/delete
     HTTP/1.1 200 OK
 
 
-
 ## Book Routes
 
 Action|Method|Path
@@ -266,7 +263,7 @@ Lookup Book by either ISBN or name|GET|/api/book/search
     
     HTTP/1.1 401 Unauthorized
 
-### Add a book to collection | POST | /api/book/owned/add
+### Add a book to collection
 #### Request
     POST | /api/user/book/add
     { "isbn" : String }
@@ -278,7 +275,7 @@ Lookup Book by either ISBN or name|GET|/api/book/search
     
     HTTP/1.1 401 Unauthorized
 
-### Delete an owned book | DELETE | /api/book/owned/{bookID}
+### Delete an owned book
 #### Request
     DELETE | /api/user/book/{BookID}/delete
 #### Response
