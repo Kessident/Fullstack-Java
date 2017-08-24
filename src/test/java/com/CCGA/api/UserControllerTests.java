@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -100,5 +101,14 @@ public class UserControllerTests {
         user1.setMajor(major1);
         user1.setSchool(school1);
         users.save(user1);
+
+        String pass = "This is a password";
+        String hash = BCrypt.hashpw(pass, BCrypt.gensalt());
+        System.out.println("hash: " + hash);
+
+        if (BCrypt.checkpw(pass, hash))
+            System.out.println("It matches");
+        else
+            System.out.println("It does not match");
     }
 }

@@ -12,6 +12,7 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -54,7 +55,7 @@ public class UserController {
         User newUser = new User();
         newUser.setName(json.get("name").asText());
         newUser.setEmail(json.get("email").asText());
-        newUser.setPassword(json.get("password").asText());
+        newUser.setPassword(BCrypt.hashpw(json.get("password").asText(), BCrypt.gensalt()));
         newUser.setSchool(schools.findOne(json.get("schoolID").asInt()));
         newUser.setMajor(majors.findOne(json.get("majorID").asInt()));
         users.save(newUser);
@@ -78,7 +79,7 @@ public class UserController {
         User exists = users.findByEmail(json.get("email").asText());
 
         if (exists != null && !exists.isDeleted()) {
-            if (json.get("password").asText().equals(exists.getPassword())) {
+            if (BCrypt.checkpw(json.get("password").asText(), exists.getPassword())) {
                 session.setAttribute("userID", exists.getUserID());
                 return ResponseEntity.status(HttpStatus.OK).body("Successfully logged in");
             } else {
@@ -135,7 +136,7 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(HttpSession session){
+    public ResponseEntity logout(HttpSession session) {
         session.invalidate();
         return ResponseEntity.status(200).body("Logged out successfully");
     }

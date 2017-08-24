@@ -108,7 +108,7 @@ public class BookControllerTests {
             .get("/api/book/all").then()
             .statusCode(200)
             .body("data.name", hasItems(book1.getName(), book2.getName(), book3.getName(), book4.getName(), book5.getName()))
-            .body("data.isbn", hasItems(book1.getisbn(), book2.getisbn(), book3.getisbn(), book4.getisbn(), book5.getisbn()));
+            .body("data.isbn", hasItems(book1.getIsbn(), book2.getIsbn(), book3.getIsbn(), book4.getIsbn(), book5.getIsbn()));
     System.out.println("List of Books successfully returned\n");
 
 
@@ -120,7 +120,7 @@ public class BookControllerTests {
         given().sessionId(sessionID)
             .get("/api/book/owned/"+book1ID).then()
             .body("data.name", equalTo(book1.getName()))
-            .body("data.isbn", equalTo(book1.getisbn()));
+            .body("data.isbn", equalTo(book1.getIsbn()));
     System.out.println("Successfully returns individual book based on ID\n");
 
 
@@ -149,7 +149,7 @@ public class BookControllerTests {
             .post("/api/book/search").then()
             .statusCode(200)
             .body("data.name", equalTo(book1.getName()))
-            .body("data.isbn", equalTo(book1.getisbn()));
+            .body("data.isbn", equalTo(book1.getIsbn()));
     System.out.println("Can find book by ISBN\n");
 
 
@@ -160,7 +160,7 @@ public class BookControllerTests {
             .post("/api/book/search").then()
             .statusCode(200)
             .body("data.name", equalTo(book1.getName()))
-            .body("data.isbn", equalTo(book1.getisbn()));
+            .body("data.isbn", equalTo(book1.getIsbn()));
     System.out.println("Can find book by exact name\n");
 
 
@@ -175,7 +175,7 @@ public class BookControllerTests {
 
         get("/api/book/search/1111111111").then()
             .body("data.name", equalTo(book1.getName()))
-            .body("data.isbn", equalTo(book1.getisbn()));
+            .body("data.isbn", equalTo(book1.getIsbn()));
     System.out.println("Can search by ISBN from URL");
     }
 }
