@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -27,20 +26,20 @@ public class User {
     private String password;
 
     @JsonIgnore
-    @OneToOne//(fetch = FetchType.LAZY)
+    @OneToOne
     private Major major;
 
     @JsonIgnore
-    @OneToOne//(fetch = FetchType.LAZY)
+    @OneToOne
     private School school;
 
     @Column @JsonIgnore
     private boolean isDeleted;
 
-    @OneToMany//(fetch = FetchType.LAZY)
+    @OneToMany
     private List<Book> booksOwned;
 
-    @OneToMany//(fetch = FetchType.LAZY)
+    @OneToMany
     private List<Listing> booksForSale;
 
     @Column

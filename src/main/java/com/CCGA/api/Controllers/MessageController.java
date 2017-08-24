@@ -29,11 +29,11 @@ public class MessageController {
     UserRepo users;
 
     @GetMapping("{userID}/all")
-    public JSONResponse getAllMessagesFromUser(@PathVariable int userID, HttpSession session){
+    public ResponseEntity getAllMessagesFromUser(@PathVariable int userID, HttpSession session){
         User loggedIn = users.findOne((int)session.getAttribute("UserID"));
-        User messagesAbout = users.findOne(userID);
-        List<Message> allMessages = messages.findAllBySentFromAndSentTo(loggedIn, messagesAbout);
-        return new JSONResponse("Success", allMessages);
+        User sentTo = users.findOne(userID);
+        List<Message> allMessages = messages.findAllBySentFromAndSentTo(loggedIn, sentTo);
+        return ResponseEntity.status(HttpStatus.OK).body(new JSONResponse("Success", allMessages));
     }
 
     @PostMapping("{userID}/create")

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,10 @@ public class UserController {
         if (exists != null && !exists.isDeleted()) {
             if (BCrypt.checkpw(json.get("password").asText(), exists.getPassword())) {
                 session.setAttribute("userID", exists.getUserID());
+
+                exists.setUpdatedAt(LocalDateTime.now());
+                users.save(exists);
+
                 return ResponseEntity.status(HttpStatus.OK).body("Successfully logged in");
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password combination");

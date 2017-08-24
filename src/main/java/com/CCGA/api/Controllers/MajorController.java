@@ -19,21 +19,21 @@ public class MajorController {
     MajorRepo majors;
 
     @GetMapping("/all")
-    public JSONResponse getAllMajors(){
+    public ResponseEntity getAllMajors(){
         List<Major> majorList = new ArrayList<>();
         majors.findAll().forEach(majorList::add);
 
-        return new JSONResponse("Success", majorList);
+        return ResponseEntity.status(HttpStatus.OK).body(new JSONResponse("Success", majorList));
     }
 
-    @GetMapping("{ID}")
-    public JSONResponse getAMajor(@RequestParam int majorID){
-        return new JSONResponse("Success", majors.findOne(majorID));
+    @GetMapping("/{majorID}")
+    public ResponseEntity getAMajor(@RequestParam int majorID){
+        return ResponseEntity.status(HttpStatus.OK).body(new JSONResponse("Success", majors.findOne(majorID)));
     }
 
     @PostMapping("/create")
     public ResponseEntity createMajor(@RequestBody Major major) {
         majors.save(major);
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

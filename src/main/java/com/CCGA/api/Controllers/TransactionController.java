@@ -37,7 +37,7 @@ public class TransactionController {
         return ResponseEntity.status(200).body(new JSONResponse("success", allTransactions));
     }
 
-    @GetMapping("/{ID}")
+    @GetMapping("/{transID}")
     public ResponseEntity getSpecificTransaction(@PathVariable int transID) {
         Transaction transaction = transactions.findOne(transID);
         return ResponseEntity.status(200).body(new JSONResponse("success", transaction));
