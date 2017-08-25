@@ -1,8 +1,6 @@
 package com.CCGA.api.Controllers;
 
 import com.CCGA.api.Models.JSONResponse;
-import com.CCGA.api.Models.Major;
-import com.CCGA.api.Models.School;
 import com.CCGA.api.Models.User;
 import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
@@ -61,7 +59,7 @@ public class UserController {
         newUser.setSchool(schools.findOne(json.get("schoolID").asInt()));
         newUser.setMajor(majors.findOne(json.get("majorID").asInt()));
         users.save(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered");
+        return ResponseEntity.status(HttpStatus.CREATED).body(new JSONResponse("User successfully registered", newUser));
     }
 
     @PostMapping(value = "/login", consumes = {"application/json"})
@@ -113,13 +111,13 @@ public class UserController {
             }
 
             User tobeUpdated = users.findOne((int) session.getAttribute("userID"));
-            if (json.get("name") != null){
+            if (json.get("name") != null) {
                 tobeUpdated.setName(json.get("name").asText());
             }
-            if (json.get("schoolID") != null){
+            if (json.get("schoolID") != null) {
                 tobeUpdated.setSchool(schools.findOne(json.get("schoolID").asInt()));
             }
-            if (json.get("majorID") != null){
+            if (json.get("majorID") != null) {
                 tobeUpdated.setMajor(majors.findOne(json.get("majorID").asInt()));
             }
 
@@ -136,7 +134,7 @@ public class UserController {
         if (session.getAttribute("userID") != null) {
             User deleted = users.findOne((int) session.getAttribute("userID"));
             deleted.setDeleted(true);
-            deleted.setEmail("");
+            deleted.setEmail(BCrypt.hashpw(deleted.getEmail(), BCrypt.gensalt()));
             deleted.setPassword("");
             deleted.setMajor(null);
             deleted.setSchool(null);
@@ -144,7 +142,7 @@ public class UserController {
             deleted.setBooksForSale(null);
             deleted.setUpdatedAt(LocalDateTime.now());
             users.save(deleted);
-            return ResponseEntity.status(HttpStatus.OK).body("User deleted");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a user");
         }
