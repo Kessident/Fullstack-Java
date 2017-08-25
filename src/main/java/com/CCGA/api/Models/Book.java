@@ -1,5 +1,7 @@
 package com.CCGA.api.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalTime;
 
@@ -29,10 +31,10 @@ public class Book {
     @OneToOne
     private Major major;
 
-    @Column
+    @Column @JsonIgnore
     private LocalTime createdAt;
 
-    @Column
+    @Column @JsonIgnore
     private LocalTime updatedAt;
 
     public Book() {

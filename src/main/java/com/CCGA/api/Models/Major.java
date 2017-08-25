@@ -1,5 +1,7 @@
 package com.CCGA.api.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,10 +16,10 @@ public class Major {
     @Column(unique = true)
     private String name;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Major() {
