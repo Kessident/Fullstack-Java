@@ -1,5 +1,7 @@
 package com.CCGA.api.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -19,10 +21,10 @@ public class Message {
     @Column
     private String message;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Message() {

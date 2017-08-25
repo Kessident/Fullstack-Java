@@ -1,5 +1,7 @@
 package com.CCGA.api.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -23,10 +25,10 @@ public class Listing {
     @Column
     private String picture;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Listing() {

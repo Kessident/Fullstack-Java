@@ -1,5 +1,7 @@
 package com.CCGA.api.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,10 +22,10 @@ public class School {
     @OneToMany
     private List<Major> majorsOffered;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime updatedAt;
 
     public School() {

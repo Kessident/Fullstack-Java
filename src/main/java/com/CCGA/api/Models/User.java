@@ -42,10 +42,10 @@ public class User {
     @OneToMany
     private List<Listing> booksForSale;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column
+    @Column @JsonIgnore
     private LocalDateTime updatedAt;
 
     public User() {
