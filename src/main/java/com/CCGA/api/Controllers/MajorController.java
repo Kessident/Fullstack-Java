@@ -36,6 +36,6 @@ public class MajorController {
     @PostMapping("/create")
     public ResponseEntity createMajor(@RequestBody Major major) {
         majors.save(major);
-        return ResponseEntity.status(CREATED).build();
+        return ResponseEntity.status(CREATED).body(new JSONResponse("major created", major));
     }
 }

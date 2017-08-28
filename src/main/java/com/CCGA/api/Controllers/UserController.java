@@ -68,29 +68,29 @@ public class UserController {
             return ResponseEntity.status(BAD_REQUEST).body("Bad Request");
         }
 
-        List<String> errMsgs = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         if (json.get("name").asText().isEmpty()) {
-            errMsgs.add("Name must not be empty");
+            errors.add("Name must not be empty");
         } if (json.get("email").asText().isEmpty()) {
-            errMsgs.add("Email must not be empty");
+            errors.add("Email must not be empty");
         } if (json.get("password").asText().isEmpty()) {
-            errMsgs.add("Password must not be empty");
+            errors.add("Password must not be empty");
         } if (json.get("password").asText().length() < 8) {
-            errMsgs.add("Password must be at least 8 characters");
+            errors.add("Password must be at least 8 characters");
         } if (json.get("majorID").asText().isEmpty()) {
-            errMsgs.add("MajorID must not be empty");
+            errors.add("MajorID must not be empty");
         } if (json.get("schoolID").asText().isEmpty()) {
-            errMsgs.add("SchoolID must not be empty");
+            errors.add("SchoolID must not be empty");
         }
         Major majorExists = majors.findOne(json.get("majorID").asInt());
         School schoolExists = schools.findOne(json.get("schoolID").asInt());
         if (majorExists == null){
-            errMsgs.add("Major with that ID not found");
+            errors.add("Major with that ID not found");
         } if (schoolExists == null){
-            errMsgs.add("School with that ID not found");
+            errors.add("School with that ID not found");
         }
-        if (!errMsgs.isEmpty()) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error(s) registering user", errMsgs));
+        if (!errors.isEmpty()) {
+            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error(s) registering user", errors));
         }
 
 
@@ -106,17 +106,13 @@ public class UserController {
     }
 
     @PostMapping(value = "/login", consumes = {"application/json"})
-    public ResponseEntity loginUser(@RequestBody String loginAttempt, HttpSession session) throws NotFoundException {
+    public ResponseEntity loginUser(@RequestBody String loginAttempt, HttpSession session) {
         JsonNode json;
 
         try {
             json = new ObjectMapper().readTree(new StringReader(loginAttempt));
         } catch (IOException e) {
             return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
-        }
-
-        if (json == null) {
-            return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields (name, email, password, majorID, schoolID)");
         }
 
         List<String> errors = new ArrayList<>();
@@ -150,7 +146,6 @@ public class UserController {
     @PutMapping(value = "/update", consumes = {"application/json"})
     public ResponseEntity updateUser(@RequestBody String updatedUserString, HttpSession session) {
         if (session.getAttribute("userID") != null) {
-
             JsonNode json;
 
             try {
@@ -204,7 +199,7 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseEntity logout(HttpSession session) {
         session.invalidate();
-        return ResponseEntity.status(200).body("Logged out successfully");
+        return ResponseEntity.status(OK).body("Logged out successfully");
     }
 
     @GetMapping("/all")
@@ -217,7 +212,6 @@ public class UserController {
             }
         });
 
-        JSONResponse jsonResponse = new JSONResponse("success", allUsers);
-        return ResponseEntity.ok(jsonResponse);
+        return ResponseEntity.status(OK).body(new JSONResponse("success", allUsers));
     }
 }
