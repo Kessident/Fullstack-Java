@@ -1,6 +1,8 @@
 package com.CCGA.api.Controllers;
 
 import com.CCGA.api.Models.JSONResponse;
+import com.CCGA.api.Models.Major;
+import com.CCGA.api.Models.School;
 import com.CCGA.api.Models.User;
 import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
@@ -10,11 +12,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -22,6 +22,8 @@ import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -44,14 +46,54 @@ public class UserController {
         try {
             json = new ObjectMapper().readTree(new StringReader(registeringUser));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Error processing request, please try again");
         }
 
         if (json == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad Request");
+            return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields (name, email, password, majorID, schoolID)");
+        } else if (json.get("email") == null) {
+            return ResponseEntity.status(BAD_REQUEST).body("Please provide an email");
         } else if (users.findByEmail(json.get("email").asText()) != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
+            return ResponseEntity.status(BAD_REQUEST).body("User already exists");
         }
+
+        try {
+            json.get("name");
+            json.get("password");
+            json.get("schoolID");
+            json.get("majorID");
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields (name, email, password, majorID, schoolID)");
+        } catch (Exception e) {
+            return ResponseEntity.status(BAD_REQUEST).body("Bad Request");
+        }
+
+        List<String> errMsgs = new ArrayList<>();
+        if (json.get("name").asText().isEmpty()) {
+            errMsgs.add("Name must not be empty");
+        } if (json.get("email").asText().isEmpty()) {
+            errMsgs.add("Email must not be empty");
+        } if (json.get("password").asText().isEmpty()) {
+            errMsgs.add("Password must not be empty");
+        } if (json.get("password").asText().length() < 8) {
+            errMsgs.add("Password must be at least 8 characters");
+        } if (json.get("majorID").asText().isEmpty()) {
+            errMsgs.add("MajorID must not be empty");
+        } if (json.get("schoolID").asText().isEmpty()) {
+            errMsgs.add("SchoolID must not be empty");
+        }
+        Major majorExists = majors.findOne(json.get("majorID").asInt());
+        School schoolExists = schools.findOne(json.get("schoolID").asInt());
+        if (majorExists == null){
+            errMsgs.add("Major with that ID not found");
+        } if (schoolExists == null){
+            errMsgs.add("School with that ID not found");
+        }
+        if (!errMsgs.isEmpty()) {
+            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error(s) registering user", errMsgs));
+        }
+
+
 
         User newUser = new User();
         newUser.setName(json.get("name").asText());
@@ -59,8 +101,8 @@ public class UserController {
         newUser.setPassword(BCrypt.hashpw(json.get("password").asText(), BCrypt.gensalt()));
         newUser.setSchool(schools.findOne(json.get("schoolID").asInt()));
         newUser.setMajor(majors.findOne(json.get("majorID").asInt()));
-        User save = users.save(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered");
+        users.save(newUser);
+        return ResponseEntity.status(CREATED).body(new JSONResponse("User successfully registered", null));
     }
 
     @PostMapping(value = "/login", consumes = {"application/json"})
@@ -70,11 +112,21 @@ public class UserController {
         try {
             json = new ObjectMapper().readTree(new StringReader(loginAttempt));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
+            return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
         }
 
         if (json == null) {
-            throw new IllegalArgumentException();
+            return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields (name, email, password, majorID, schoolID)");
+        }
+
+        List<String> errors = new ArrayList<>();
+        if (json.get("email") == null) {
+            errors.add("Please provide an email");
+        } if (json.get("password") == null) {
+            errors.add("Please provide a password");
+        }
+        if (!errors.isEmpty()){
+            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error(s) logging in", errors));
         }
 
         User exists = users.findByEmail(json.get("email").asText());
@@ -86,12 +138,12 @@ public class UserController {
                 exists.setUpdatedAt(LocalDateTime.now());
                 users.save(exists);
 
-                return ResponseEntity.status(HttpStatus.OK).body("Successfully logged in");
+                return ResponseEntity.status(OK).body("Successfully logged in");
             } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password combination");
+                return ResponseEntity.status(UNAUTHORIZED).body("Invalid username/password combination");
             }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password combination");
+            return ResponseEntity.status(UNAUTHORIZED).body("Invalid username/password combination");
         }
     }
 
@@ -104,11 +156,11 @@ public class UserController {
             try {
                 json = new ObjectMapper().readTree(new StringReader(updatedUserString));
             } catch (IOException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error processing request, please try again");
+                return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
             }
 
             if (json == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No data sent");
+                return ResponseEntity.status(BAD_REQUEST).body("No data sent");
             }
 
             User tobeUpdated = users.findOne((int) session.getAttribute("userID"));
@@ -124,9 +176,9 @@ public class UserController {
 
             tobeUpdated.setUpdatedAt(LocalDateTime.now());
             users.save(tobeUpdated);
-            return ResponseEntity.status(HttpStatus.OK).body("User updated");
+            return ResponseEntity.status(OK).body("User updated");
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to update a user");
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to update a user");
         }
     }
 
@@ -143,9 +195,9 @@ public class UserController {
             deleted.setBooksForSale(null);
             deleted.setUpdatedAt(LocalDateTime.now());
             users.save(deleted);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(NO_CONTENT).build();
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You must be logged in to delete a user");
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to delete a user");
         }
     }
 
