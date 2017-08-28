@@ -1,17 +1,21 @@
 package com.CCGA.api.Controllers;
 
-import com.CCGA.api.Models.*;
+import com.CCGA.api.Models.Book;
+import com.CCGA.api.Models.JSONResponse;
+import com.CCGA.api.Models.Request;
+import com.CCGA.api.Models.User;
 import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.RequestRepo;
 import com.CCGA.api.Repositorys.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/request")
@@ -29,7 +33,7 @@ public class RequestController {
     public ResponseEntity getAllRequests() {
         List<Request> requestsList = new ArrayList<>();
         requests.findAll().forEach(requestsList::add);
-        if (requestsList.isEmpty()){
+        if (requestsList.isEmpty()) {
             return ResponseEntity.status(NOT_FOUND).body("No requests");
         } else {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", requestsList));
@@ -38,9 +42,9 @@ public class RequestController {
 
     //Get a specific request
     @GetMapping("/{requestID}")
-    public ResponseEntity getASpecificRequest(@PathVariable int requestID){
+    public ResponseEntity getASpecificRequest(@PathVariable int requestID) {
         Request foundRequest = requests.findOne(requestID);
-        if (foundRequest != null){
+        if (foundRequest != null) {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", foundRequest));
         } else {
             return ResponseEntity.status(NOT_FOUND).body("Request with that ID not found");
@@ -49,12 +53,12 @@ public class RequestController {
 
     //Get a list of all requests a logged in user made
     @GetMapping("/mine/all")
-    public ResponseEntity getAllRequestMadeByLoggedIn(HttpSession session){
+    public ResponseEntity getAllRequestMadeByLoggedIn(HttpSession session) {
         User loggedIn = users.findOne((int) session.getAttribute("userID"));
         List<Request> requestListByUser = new ArrayList<>();
 
         requestListByUser.addAll(requests.findAllByUserRequestedEquals(loggedIn));
-        if (requestListByUser.isEmpty()){
+        if (requestListByUser.isEmpty()) {
             return ResponseEntity.status(NOT_FOUND).body("No requests");
         } else {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", requestListByUser));
@@ -63,11 +67,11 @@ public class RequestController {
 
     //Get a specific request a logged in user made
     @GetMapping("/mine/{requestID}")
-    public ResponseEntity getASpecificRequestByLoggedIn(@PathVariable int requestID, HttpSession session){
+    public ResponseEntity getASpecificRequestByLoggedIn(@PathVariable int requestID, HttpSession session) {
         User loggedIn = users.findOne((int) session.getAttribute("userID"));
         Request foundRequest = requests.findByRequestIDAndUserRequested(requestID, loggedIn);
 
-        if (foundRequest != null){
+        if (foundRequest != null) {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", foundRequest));
         } else {
             return ResponseEntity.status(NOT_FOUND).body("Request with that ID not found by logged in user");
@@ -87,10 +91,10 @@ public class RequestController {
     //Delete a request a logged in user made
     @DeleteMapping("/delete/{requestID}")
     public ResponseEntity deleteARequest(@PathVariable int requestID, HttpSession session) {
-        User loggedIn = users.findOne((int)session.getAttribute("userID"));
+        User loggedIn = users.findOne((int) session.getAttribute("userID"));
         Request foundRequest = requests.findByRequestIDAndUserRequested(requestID, loggedIn);
 
-        if (foundRequest != null){
+        if (foundRequest != null) {
             requests.delete(foundRequest);
             return ResponseEntity.status(NO_CONTENT).build();
         } else {

@@ -4,12 +4,15 @@ import com.CCGA.api.Models.JSONResponse;
 import com.CCGA.api.Models.Major;
 import com.CCGA.api.Repositorys.MajorRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping("/api/major")
@@ -19,7 +22,7 @@ public class MajorController {
     MajorRepo majors;
 
     @GetMapping("/all")
-    public ResponseEntity getAllMajors(){
+    public ResponseEntity getAllMajors() {
         List<Major> majorList = new ArrayList<>();
         majors.findAll().forEach(majorList::add);
 
@@ -27,13 +30,18 @@ public class MajorController {
     }
 
     @GetMapping("/{majorID}")
-    public ResponseEntity getAMajor(@RequestParam int majorID){
-        return ResponseEntity.status(OK).body(new JSONResponse("Success", majors.findOne(majorID)));
+    public ResponseEntity getAMajor(@PathVariable int majorID) {
+        Major foundMajor = majors.findOne(majorID);
+        if (foundMajor == null){
+            return ResponseEntity.status(NOT_FOUND).body("major with that ID not found");
+        } else {
+            return ResponseEntity.status(OK).body(new JSONResponse("Success", foundMajor));
+        }
     }
 
     @PostMapping("/create")
     public ResponseEntity createMajor(@RequestBody Major major) {
         majors.save(major);
-        return ResponseEntity.status(CREATED).build();
+        return ResponseEntity.status(CREATED).body(new JSONResponse("major created", major));
     }
 }
