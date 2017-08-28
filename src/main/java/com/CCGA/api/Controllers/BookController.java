@@ -59,7 +59,7 @@ public class BookController {
 
             return ResponseEntity.status(CREATED).body(new JSONResponse("Book added to collection", added));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to add a book to your collection");
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to add a book to your collection.");
         }
     }
 
