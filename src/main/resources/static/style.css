@@ -1,0 +1,19 @@
+.main-content{
+  text-align: center;
+}
+
+.register-text{
+  margin-top: 5%;
+}
+
+.search-text{
+  text-align: center;
+}
+
+.profile-section, .transaction-list{
+  margin-top: 5%;
+}
+
+.profile-delete{
+  margin-left: 45%;
+}
