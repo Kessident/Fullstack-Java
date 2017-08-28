@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -29,8 +30,13 @@ public class MajorController {
     }
 
     @GetMapping("/{majorID}")
-    public ResponseEntity getAMajor(@RequestParam int majorID) {
-        return ResponseEntity.status(OK).body(new JSONResponse("Success", majors.findOne(majorID)));
+    public ResponseEntity getAMajor(@PathVariable int majorID) {
+        Major foundMajor = majors.findOne(majorID);
+        if (foundMajor == null){
+            return ResponseEntity.status(NOT_FOUND).build();
+        } else {
+            return ResponseEntity.status(OK).body(new JSONResponse("Success", foundMajor));
+        }
     }
 
     @PostMapping("/create")

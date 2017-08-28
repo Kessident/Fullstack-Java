@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/school")
@@ -31,9 +30,14 @@ public class SchoolController {
         return ResponseEntity.status(OK).body(new JSONResponse("Success", schoolList));
     }
 
-    @GetMapping("{ID}")
-    public ResponseEntity getASchool(@RequestParam int schoolID) {
-        return ResponseEntity.status(OK).body(new JSONResponse("Success", schools.findOne(schoolID)));
+    @GetMapping("/{ID}")
+    public ResponseEntity getASchool(@PathVariable int schoolID) {
+        School foundSchool = schools.findOne(schoolID);
+        if (foundSchool == null){
+            return ResponseEntity.status(NOT_FOUND).build();
+        } else {
+            return ResponseEntity.status(OK).body(new JSONResponse("Success", foundSchool));
+        }
     }
 
     @PostMapping("/create")

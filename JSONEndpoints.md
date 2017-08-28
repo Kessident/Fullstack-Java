@@ -116,6 +116,7 @@ Action|Method|Path
 ---|---|---
 Get a list of all schools|GET|/api/school/all
 Get a specific School|GET|/api/school/{ID}
+Create a school | POST | /api/school/create
 
 ### Get a list of all Schools
 #### Request
@@ -132,6 +133,8 @@ Get a specific School|GET|/api/school/{ID}
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “data”:  School  }
+	
+	HTTP/1.1 404 Not Found
 
 ### Create a school
 #### Request
