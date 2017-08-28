@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -58,8 +59,8 @@ public class UserController {
         newUser.setPassword(BCrypt.hashpw(json.get("password").asText(), BCrypt.gensalt()));
         newUser.setSchool(schools.findOne(json.get("schoolID").asInt()));
         newUser.setMajor(majors.findOne(json.get("majorID").asInt()));
-        users.save(newUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new JSONResponse("User successfully registered", newUser));
+        User save = users.save(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered");
     }
 
     @PostMapping(value = "/login", consumes = {"application/json"})
