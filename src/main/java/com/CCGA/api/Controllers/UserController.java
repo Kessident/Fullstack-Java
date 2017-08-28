@@ -10,7 +10,6 @@ import com.CCGA.api.Repositorys.SchoolRepo;
 import com.CCGA.api.Repositorys.UserRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -39,7 +38,7 @@ public class UserController {
     BookRepo books;
 
 
-    @PostMapping(value = "/register", consumes = {"application/json"})
+    @PostMapping(value = "/register", consumes = "application/json")
     public ResponseEntity registerNewUser(@RequestBody String registeringUser) {
         JsonNode json;
 
@@ -93,8 +92,6 @@ public class UserController {
             return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error(s) registering user", errors));
         }
 
-
-
         User newUser = new User();
         newUser.setName(json.get("name").asText());
         newUser.setEmail(json.get("email").asText());
@@ -105,7 +102,12 @@ public class UserController {
         return ResponseEntity.status(CREATED).body(new JSONResponse("User successfully registered", null));
     }
 
-    @PostMapping(value = "/login", consumes = {"application/json"})
+    @PostMapping("/register")
+    public ResponseEntity registerNotJSON(){
+        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+    }
+
+    @PostMapping(value = "/login", consumes = "application/json")
     public ResponseEntity loginUser(@RequestBody String loginAttempt, HttpSession session) {
         JsonNode json;
 
@@ -143,7 +145,12 @@ public class UserController {
         }
     }
 
-    @PutMapping(value = "/update", consumes = {"application/json"})
+    @PostMapping("/login")
+    public ResponseEntity loginNotJSON(){
+        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+    }
+
+    @PutMapping(value = "/update", consumes = "application/json")
     public ResponseEntity updateUser(@RequestBody String updatedUserString, HttpSession session) {
         if (session.getAttribute("userID") != null) {
             JsonNode json;
@@ -175,6 +182,11 @@ public class UserController {
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to update a user");
         }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity updateNotJSON(){
+        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
     }
 
     @DeleteMapping("/delete")

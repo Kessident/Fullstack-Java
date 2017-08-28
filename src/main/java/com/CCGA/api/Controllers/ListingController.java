@@ -29,26 +29,34 @@ public class ListingController {
     SchoolRepo schools;
 
     @GetMapping("/all")
-    public ResponseEntity getAllBooksForSale() {
-        try {
-            Iterable<Listing> bookList = listings.findAll();
-            return ResponseEntity.status(OK).body(new JSONResponse("Success", bookList));
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+    public ResponseEntity getAllBooksForSale(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            try {
+                Iterable<Listing> bookList = listings.findAll();
+                return ResponseEntity.status(OK).body(new JSONResponse("Success", bookList));
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
+            }
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
     }
 
     @GetMapping("/{listingID}")
-    public ResponseEntity getASpecificListing(@PathVariable int listingID) {
-        Listing found = listings.findOne(listingID);
-        if (found == null) {
-            return ResponseEntity.status(NOT_FOUND).body("No listing with that ID found");
+    public ResponseEntity getASpecificListing(@PathVariable int listingID, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            Listing found = listings.findOne(listingID);
+            if (found == null) {
+                return ResponseEntity.status(NOT_FOUND).body("No listing with that ID found");
+            } else {
+                return ResponseEntity.status(OK).body(new JSONResponse("Success", found));
+            }
         } else {
-            return ResponseEntity.status(OK).body(new JSONResponse("Success", found));
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
     }
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = "application/json")
     public ResponseEntity createAListing(@RequestBody String ListingAsString, HttpSession session) {
         if (session.getAttribute("userID") != null) {
             JsonNode json;
@@ -83,15 +91,26 @@ public class ListingController {
         }
     }
 
+    @PostMapping("/create")
+    public ResponseEntity createListingNotJSON(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+        }
+    }
+
     @DeleteMapping("/{listingID}")
     public ResponseEntity deleteAListing(@PathVariable int listingID, HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            User loggedIn = users.findOne((int) session.getAttribute("userID"));
             Listing foundListing = listings.findOne(listingID);
 
             if (foundListing == null) {
                 return ResponseEntity.status(NOT_FOUND).body("Listing with that ID not found");
             }
+
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
+
             if (loggedIn.getBooksForSale().contains(foundListing)) {
                 loggedIn.removeListing(foundListing);
                 users.save(loggedIn);
@@ -104,7 +123,7 @@ public class ListingController {
         }
     }
 
-    @PutMapping("/{listingID}")
+    @PutMapping(value = "/{listingID}", consumes = "application/json")
     public ResponseEntity editAListing(@PathVariable int listingID, @RequestBody String editedListing, HttpSession session) {
         if (session.getAttribute("userID") != null) {
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
@@ -133,6 +152,15 @@ public class ListingController {
             }
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to edit a listing");
+        }
+    }
+
+    @PutMapping("/{listingID")
+    public ResponseEntity editListingNotJSON(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
     }
 

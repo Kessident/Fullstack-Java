@@ -33,7 +33,7 @@ public class MajorController {
     public ResponseEntity getAMajor(@PathVariable int majorID) {
         Major foundMajor = majors.findOne(majorID);
         if (foundMajor == null){
-            return ResponseEntity.status(NOT_FOUND).build();
+            return ResponseEntity.status(NOT_FOUND).body("major with that ID not found");
         } else {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", foundMajor));
         }

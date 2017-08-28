@@ -27,12 +27,12 @@ public class BookController {
     @Autowired
     UserRepo users;
 
-    @GetMapping("/all")
+    @GetMapping(value = "/all")
     public ResponseEntity getAllBooksOwned(HttpSession session) {
         try {
             List<Book> bookList = users.findOne((Integer) session.getAttribute("userID")).getBooksOwned();
             if (bookList == null) {
-                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("User has no books", null));
+                return ResponseEntity.status(OK).body(new JSONResponse("User has no books", null));
             } else {
                 return ResponseEntity.status(OK).body(new JSONResponse("Success", bookList));
             }
@@ -41,7 +41,7 @@ public class BookController {
         }
     }
 
-    @PostMapping("/owned/add")
+    @PostMapping(value = "/owned/add", consumes = "application/json")
     public ResponseEntity addABookToCollection(@RequestBody String bookToBeAdded, HttpSession session) throws IOException {
         if (session.getAttribute("userID") != null) {
             JsonNode json;
@@ -58,9 +58,18 @@ public class BookController {
 
             users.save(loggedIn);
 
-            return ResponseEntity.status(CREATED).body(new JSONResponse("Book added to collection", added));
+            return ResponseEntity.status(CREATED).header("Content-Type", "application/json").body(new JSONResponse("Book added to collection", added));
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to add a book to your collection.");
+        }
+    }
+
+    @PostMapping("/owned/add")
+    public ResponseEntity createListingNotJSON(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
     }
 
@@ -73,7 +82,7 @@ public class BookController {
             if (bookList.contains(bookSearchedFor)) {
                 return ResponseEntity.status(OK).body(new JSONResponse("Success", bookSearchedFor));
             } else {
-                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("No book with that ID found in user's collection", null));
+                return ResponseEntity.status(OK).body(new JSONResponse("No book with that ID found in user's collection", null));
             }
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error", null));
@@ -93,7 +102,7 @@ public class BookController {
 
                 return ResponseEntity.status(NO_CONTENT).build();
             } else {
-                return ResponseEntity.status(BAD_REQUEST).body("User does not have specified book in collection");
+                return ResponseEntity.status(NOT_FOUND).body("User does not have specified book in collection");
             }
         } catch (Exception e) {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to delete a book from your collection");
@@ -101,44 +110,60 @@ public class BookController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity bookSearch(@RequestBody String bookSearchJSON) {
-        JsonNode json;
+    public ResponseEntity bookSearch(@RequestBody String bookSearchJSON, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
 
-        try {
-            json = processJSON(bookSearchJSON);
-        } catch (Exception e) {
-            return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
-        }
+            JsonNode json;
 
-        if (json.get("isbn") != null) {
-            Book book = books.findByIsbn(json.get("isbn").asText());
-            if (book == null) {
-                // TODO: 8/23/17 Probably change this to specify people should submit missing book info 
-                return ResponseEntity.status(NOT_FOUND).body("Book does not exist in our server");
-            } else {
-                return ResponseEntity.status(OK).body(new JSONResponse("Book Found", book));
+            try {
+                json = processJSON(bookSearchJSON);
+            } catch (Exception e) {
+                return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
             }
 
-        } else if (json.get("name") != null) {
-            Book book = books.findByName(json.get("name").asText());
+            if (json.get("isbn") != null) {
+                Book book = books.findByIsbn(json.get("isbn").asText());
+                if (book == null) {
+                    // TODO: 8/23/17 Probably change this to specify people can/should submit missing book info
+                    return ResponseEntity.status(OK).body("Book does not exist in our server");
+                } else {
+                    return ResponseEntity.status(OK).body(new JSONResponse("Book Found", book));
+                }
+
+            } else if (json.get("name") != null) {
+                Book book = books.findByName(json.get("name").asText());
+                if (book == null) {
+                    // TODO: 8/23/17 Probably change this to specify people can/should submit missing book info
+                    return ResponseEntity.status(OK).body("Book does not exist in our server");
+                } else {
+                    return ResponseEntity.status(OK).body(new JSONResponse("Book Found", book));
+                }
+            } else if (json.get("author") != null) {
+                List<Book> booksFoundByAuthor = books.findAllByAuthor(json.get("author").asText());
+                if (booksFoundByAuthor != null) {
+                    // TODO: 8/23/17 Probably change this to specify people can/should submit missing book info
+                    return ResponseEntity.status(OK).body("No Books found by that author found");
+                }
+            }
+            return ResponseEntity.status(BAD_REQUEST).body("Please provide an ISBN or name to search for");
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+        }
+    }
+
+    @GetMapping("/search/{isbn}")
+    public ResponseEntity searchBookByISBN(@PathVariable String isbn, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+
+            Book book = books.findByIsbn(isbn);
             if (book == null) {
                 // TODO: 8/23/17 Probably change this to specify people should submit missing book info
                 return ResponseEntity.status(NOT_FOUND).body("Book does not exist in our server");
             } else {
                 return ResponseEntity.status(OK).body(new JSONResponse("Book Found", book));
             }
-        }
-        return ResponseEntity.status(BAD_REQUEST).body("Please provide an ISBN or name to search for");
-    }
-
-    @GetMapping("/search/{isbn}")
-    public ResponseEntity searchBookByISBN(@PathVariable String isbn) {
-        Book book = books.findByIsbn(isbn);
-        if (book == null) {
-            // TODO: 8/23/17 Probably change this to specify people should submit missing book info
-            return ResponseEntity.status(NOT_FOUND).body("Book does not exist in our server");
         } else {
-            return ResponseEntity.status(OK).body(new JSONResponse("Book Found", book));
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
     }
 
