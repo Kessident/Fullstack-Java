@@ -70,22 +70,28 @@ public class UserController {
         List<String> errors = new ArrayList<>();
         if (json.get("name").asText().isEmpty()) {
             errors.add("Name must not be empty");
-        } if (json.get("email").asText().isEmpty()) {
+        }
+        if (json.get("email").asText().isEmpty()) {
             errors.add("Email must not be empty");
-        } if (json.get("password").asText().isEmpty()) {
+        }
+        if (json.get("password").asText().isEmpty()) {
             errors.add("Password must not be empty");
-        } if (json.get("password").asText().length() < 8) {
+        }
+        if (json.get("password").asText().length() < 8) {
             errors.add("Password must be at least 8 characters");
-        } if (json.get("majorID").asText().isEmpty()) {
+        }
+        if (json.get("majorID").asText().isEmpty()) {
             errors.add("MajorID must not be empty");
-        } if (json.get("schoolID").asText().isEmpty()) {
+        }
+        if (json.get("schoolID").asText().isEmpty()) {
             errors.add("SchoolID must not be empty");
         }
         Major majorExists = majors.findOne(json.get("majorID").asInt());
         School schoolExists = schools.findOne(json.get("schoolID").asInt());
-        if (majorExists == null){
+        if (majorExists == null) {
             errors.add("Major with that ID not found");
-        } if (schoolExists == null){
+        }
+        if (schoolExists == null) {
             errors.add("School with that ID not found");
         }
         if (!errors.isEmpty()) {
@@ -103,19 +109,19 @@ public class UserController {
     }
 
     @PostMapping(value = "/register", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
-    public ResponseEntity registerNewUserFormData(String name, String email, String password, Integer majorID, Integer schoolID){
-        if ((name == null || name.isEmpty()) || (email == null || email.isEmpty()) || (password == null || password.isEmpty()) || (majorID == null) || (schoolID == null)){
+    public ResponseEntity registerNewUserFormData(String name, String email, String password, Integer majorID, Integer schoolID) {
+        if ((name == null || name.isEmpty()) || (email == null || email.isEmpty()) || (password == null || password.isEmpty()) || (majorID == null) || (schoolID == null)) {
             return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields (name, email, password, majorID, schoolID)");
-        } else if (password.length() < 8){
+        } else if (password.length() < 8) {
             return ResponseEntity.status(BAD_REQUEST).body("Password must be at least 8 characters");
         }
 
         Major major = majors.findOne(majorID);
-        if (major == null){
+        if (major == null) {
             return ResponseEntity.status(BAD_REQUEST).body("No major with that ID found");
         }
         School school = schools.findOne(schoolID);
-        if (school == null){
+        if (school == null) {
             return ResponseEntity.status(BAD_REQUEST).body("No school with that ID found");
         }
 
@@ -130,7 +136,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerNotJSON(){
+    public ResponseEntity registerNotJSON() {
         return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
     }
 
@@ -147,10 +153,11 @@ public class UserController {
         List<String> errors = new ArrayList<>();
         if (json.get("email") == null) {
             errors.add("Please provide an email");
-        } if (json.get("password") == null) {
+        }
+        if (json.get("password") == null) {
             errors.add("Please provide a password");
         }
-        if (!errors.isEmpty()){
+        if (!errors.isEmpty()) {
             return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error(s) logging in", errors));
         }
 
@@ -172,8 +179,28 @@ public class UserController {
         }
     }
 
+    @PostMapping(value = "/login", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity loginUserFormData(String email, String password, HttpSession session) {
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            return ResponseEntity.status(BAD_REQUEST).body("Please provide both an email and a password");
+        }
+
+        User loginAttempt = users.findByEmail(email);
+
+        if (loginAttempt == null || loginAttempt.isDeleted() || !BCrypt.checkpw(password, loginAttempt.getPassword())) {
+            return ResponseEntity.status(UNAUTHORIZED).body("Invalid username/password combination");
+        } else {
+            session.setAttribute("userID", loginAttempt.getUserID());
+
+            loginAttempt.setUpdatedAt(LocalDateTime.now());
+            users.save(loginAttempt);
+
+            return ResponseEntity.status(OK).body("Successfully logged in");
+        }
+    }
+
     @PostMapping("/login")
-    public ResponseEntity loginNotJSON(){
+    public ResponseEntity loginNotJSON() {
         return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
     }
 
@@ -211,8 +238,31 @@ public class UserController {
         }
     }
 
+    @PutMapping(value = "/update", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity updateUserFormData(String name, Integer schoolID, Integer majorID, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            User tobeUpdated = users.findOne((int) session.getAttribute("userID"));
+            if (name != null) {
+                tobeUpdated.setName(name);
+            }
+            if (schoolID != null) {
+                tobeUpdated.setSchool(schools.findOne(schoolID));
+            }
+            if (majorID != null) {
+                tobeUpdated.setMajor(majors.findOne(majorID));
+            }
+
+            tobeUpdated.setUpdatedAt(LocalDateTime.now());
+            users.save(tobeUpdated);
+            return ResponseEntity.status(OK).body("User updated");
+
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to update a user");
+        }
+    }
+
     @PutMapping("/update")
-    public ResponseEntity updateNotJSON(){
+    public ResponseEntity updateNotJSON() {
         return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
     }
 
