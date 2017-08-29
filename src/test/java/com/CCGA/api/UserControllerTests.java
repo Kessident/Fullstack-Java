@@ -8,12 +8,15 @@ import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.SchoolRepo;
 import com.CCGA.api.Repositorys.UserRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,12 +45,27 @@ public class UserControllerTests {
     JdbcTemplate jdbc;
 
     @Test
+    @DirtiesContext
     public void userControllerTests() {
         setUp();
 
-        User foundUser = users.findByEmail("email");
         School school = schools.findByName("School");
         Major major = majors.findByName("Biology");
+
+        Map<String, Object> userAsJSON = new HashMap<>();
+
+        userAsJSON.put("name", "name");
+        userAsJSON.put("email", "email");
+        userAsJSON.put("password", "pass");
+        userAsJSON.put("majorID", major.getMajorID());
+        userAsJSON.put("schoolID", school.getSchoolID());
+
+
+        given().contentType(JSON).body(userAsJSON).post("/api/user/register");
+    System.out.println("User can register");
+
+        User foundUser = users.findByEmail("email");
+
         assertNotNull(foundUser);
         assertEquals("Name should match", "name", "name");
         assertEquals("email should match", "email", "email");
@@ -89,21 +107,12 @@ public class UserControllerTests {
     }
 
     private void setUp() {
-        User user1 = new User();
-        Major major1 = new Major("Biology");
-        majors.save(major1);
+        Map<String, Object> majorAsJSON = new HashMap<>();
+        majorAsJSON.put("name", "Biology");
+        given().contentType(JSON).body(majorAsJSON).post("/api/major/create");
 
-        List<Major> majorList = new ArrayList<>();
-        majorList.add(major1);
-
-        School school1 = new School("School", new Location(1, "street", "city", "state", 11111, 1111, new Float(1), new Float(1)), majorList);
-        schools.save(school1);
-
-        user1.setName("name");
-        user1.setEmail("email");
-        user1.setPassword("pass");
-        user1.setMajor(major1);
-        user1.setSchool(school1);
-        users.save(user1);
+        School school1 = new School("School", new Location(1, "street", "city", "state", 11111, 1111, new Float(1), new Float(1)), null);
+        Map<String, Object> schoolAsJSON = new ObjectMapper().convertValue(school1, Map.class);
+        given().contentType(JSON).body(schoolAsJSON).post("/api/school/create");
     }
 }

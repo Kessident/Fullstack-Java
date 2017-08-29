@@ -116,6 +116,7 @@ Action|Method|Path
 ---|---|---
 Get a list of all schools|GET|/api/school/all
 Get a specific School|GET|/api/school/{ID}
+Create a school | POST | /api/school/create
 
 ### Get a list of all Schools
 #### Request
@@ -132,6 +133,8 @@ Get a specific School|GET|/api/school/{ID}
     HTTP/1.1 200 OK
     Content-Type: application/json
 	{ “data”:  School  }
+	
+	HTTP/1.1 404 Not Found
 
 ### Create a school
 #### Request
@@ -519,7 +522,8 @@ Delete a request a logged in user made|DELETE|/api/request/delete/{requestID}
 ### Create a new request for a book from logged in user
 #### Request
     POST /api/request/create
-    { "bookID": Integer }
+    { "bookID": Integer } Makes a request for a book that already exists
+    { "name": String, "author": String, "isbn": String, "majorID": Integer } Makes a request for a book that doesn't exist, and creates that book
 #### Response
     HTTP/1.1 200 OK
     Content-Type: application/json

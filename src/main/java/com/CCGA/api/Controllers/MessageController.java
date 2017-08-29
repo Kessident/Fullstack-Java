@@ -8,7 +8,6 @@ import com.CCGA.api.Repositorys.UserRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.springframework.http.HttpStatus.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +16,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 
@@ -28,21 +29,21 @@ public class MessageController {
     @Autowired
     UserRepo users;
 
-    @GetMapping("{userID}/all")
-    public ResponseEntity getAllMessagesFromUser(@PathVariable int userID, HttpSession session){
-        User loggedIn = users.findOne((int)session.getAttribute("UserID"));
+    @GetMapping("/{userID}/all")
+    public ResponseEntity getAllMessagesFromUser(@PathVariable int userID, HttpSession session) {
+        User loggedIn = users.findOne((int) session.getAttribute("UserID"));
         User sentTo = users.findOne(userID);
         List<Message> allMessages = messages.findAllBySentFromAndSentTo(loggedIn, sentTo);
         return ResponseEntity.status(OK).body(new JSONResponse("Success", allMessages));
     }
 
-    @PostMapping("{userID}/create")
-    public ResponseEntity createNewMessage(@PathVariable int userID, @RequestBody String messageString, HttpSession session){
+    @PostMapping(value = "/{userID}/create", consumes = "application/json")
+    public ResponseEntity createNewMessage(@PathVariable int userID, @RequestBody String messageString, HttpSession session) {
         JsonNode messageJSON;
 
         try {
             messageJSON = new ObjectMapper().readTree(new StringReader(messageString));
-            if (messageJSON == null){
+            if (messageJSON == null) {
                 return ResponseEntity.status(BAD_REQUEST)
                     .body(new JSONResponse("Error reading message", null));
             }
@@ -53,7 +54,7 @@ public class MessageController {
 
         Message newMessage = new Message();
         newMessage.setMessage(messageJSON.get("message").asText());
-        newMessage.setSentFrom(users.findOne( (int) session.getAttribute("userID")));
+        newMessage.setSentFrom(users.findOne((int) session.getAttribute("userID")));
         newMessage.setSentTo(users.findOne(userID));
 
         messages.save(newMessage);
@@ -62,17 +63,31 @@ public class MessageController {
             .body(new JSONResponse("success", newMessage));
     }
 
+    @PostMapping("/{userID}/create")
+    public ResponseEntity createNewMessageNotJSON(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+        }
+    }
+
     @GetMapping("/contacts")
-    public ResponseEntity getAllContacts(HttpSession session){
-        User loggedIn = users.findOne( (int) session.getAttribute("userID"));
+    public ResponseEntity getAllContacts(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
 
-        List<Message> allMessages = messages.findAllBySentFrom(loggedIn);
-        List<User> allContacts = new ArrayList<>();
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
 
-        allMessages.forEach(msg -> allContacts.add(msg.getSentTo()));
+            List<Message> allMessages = messages.findAllBySentFrom(loggedIn);
+            List<User> allContacts = new ArrayList<>();
 
-        return ResponseEntity.status(OK)
-            .body(new JSONResponse("success", allContacts));
+            allMessages.forEach(msg -> allContacts.add(msg.getSentTo()));
+
+            return ResponseEntity.status(OK)
+                .body(new JSONResponse("success", allContacts));
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+        }
     }
 
 
