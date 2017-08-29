@@ -29,7 +29,7 @@ public class MessageController {
     @Autowired
     UserRepo users;
 
-    @GetMapping("{userID}/all")
+    @GetMapping("/{userID}/all")
     public ResponseEntity getAllMessagesFromUser(@PathVariable int userID, HttpSession session) {
         User loggedIn = users.findOne((int) session.getAttribute("UserID"));
         User sentTo = users.findOne(userID);
@@ -37,7 +37,7 @@ public class MessageController {
         return ResponseEntity.status(OK).body(new JSONResponse("Success", allMessages));
     }
 
-    @PostMapping("{userID}/create")
+    @PostMapping(value = "/{userID}/create", consumes = "application/json")
     public ResponseEntity createNewMessage(@PathVariable int userID, @RequestBody String messageString, HttpSession session) {
         JsonNode messageJSON;
 
@@ -63,17 +63,31 @@ public class MessageController {
             .body(new JSONResponse("success", newMessage));
     }
 
+    @PostMapping("/{userID}/create")
+    public ResponseEntity createNewMessageNotJSON(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+        }
+    }
+
     @GetMapping("/contacts")
     public ResponseEntity getAllContacts(HttpSession session) {
-        User loggedIn = users.findOne((int) session.getAttribute("userID"));
+        if (session.getAttribute("userID") != null) {
 
-        List<Message> allMessages = messages.findAllBySentFrom(loggedIn);
-        List<User> allContacts = new ArrayList<>();
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
 
-        allMessages.forEach(msg -> allContacts.add(msg.getSentTo()));
+            List<Message> allMessages = messages.findAllBySentFrom(loggedIn);
+            List<User> allContacts = new ArrayList<>();
 
-        return ResponseEntity.status(OK)
-            .body(new JSONResponse("success", allContacts));
+            allMessages.forEach(msg -> allContacts.add(msg.getSentTo()));
+
+            return ResponseEntity.status(OK)
+                .body(new JSONResponse("success", allContacts));
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+        }
     }
 
 

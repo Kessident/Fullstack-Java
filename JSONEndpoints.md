@@ -522,7 +522,8 @@ Delete a request a logged in user made|DELETE|/api/request/delete/{requestID}
 ### Create a new request for a book from logged in user
 #### Request
     POST /api/request/create
-    { "bookID": Integer }
+    { "bookID": Integer } Makes a request for a book that already exists
+    { "name": String, "author": String, "isbn": String, "majorID": Integer } Makes a request for a book that doesn't exist, and creates that book
 #### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
