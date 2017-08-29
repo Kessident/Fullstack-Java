@@ -59,6 +59,7 @@ public class UserController {
         try {
             json.get("name");
             json.get("password");
+            json.get("passwordConfirm");
             json.get("schoolID");
             json.get("majorID");
         } catch (NullPointerException e) {
@@ -76,6 +77,9 @@ public class UserController {
         }
         if (json.get("password").asText().isEmpty()) {
             errors.add("Password must not be empty");
+        }
+        if (!json.get("passwordConfirm").asText().equals(json.get("password").asText())) {
+            errors.add("Password and password Confirm must be the same");
         }
         if (json.get("password").asText().length() < 8) {
             errors.add("Password must be at least 8 characters");
@@ -109,10 +113,11 @@ public class UserController {
     }
 
     @PostMapping(value = "/register", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
-    public ResponseEntity registerNewUserFormData(String name, String email, String password, Integer majorID, Integer schoolID) {
-        if ((name == null || name.isEmpty()) || (email == null || email.isEmpty()) || (password == null || password.isEmpty()) || (majorID == null) || (schoolID == null)) {
-            return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields (name, email, password, majorID, schoolID)");
-        } else if (password.length() < 8) {
+    public ResponseEntity registerNewUserFormData(String name, String email, String password, String passwordConfirm, Integer majorID, Integer schoolID) {
+        if ((name == null || name.isEmpty()) || (email == null || email.isEmpty()) || (password == null || password.isEmpty()) || (passwordConfirm == null || passwordConfirm.isEmpty()) || (majorID
+            == null) || (schoolID == null)) {
+            return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields (name, email, password, passwordConfirm, majorID, schoolID)");
+        } else if (password.length() < 8 || !password.equals(passwordConfirm)) {
             return ResponseEntity.status(BAD_REQUEST).body("Password must be at least 8 characters");
         }
 
