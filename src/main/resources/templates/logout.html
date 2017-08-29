@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="../css/style.css"/>
+    <link rel="stylesheet" href="../static/style.css"/>
     <title>College Book Buy</title>
 </head>
 <body>
@@ -22,36 +22,24 @@
     </div>
   </nav>
 <div class="container">
-    <h1>Create A Book Listing</h1>
-    <p>Can't find the book you're looking for? Why not create a listing to let your classmates know what book you need.</p>
+    <h1>You've been successfully Logged Out</h1>
     <form action="#" method="post">
         <div class="form-group">
-            <label id="name">Name</label>
-            <input type="text" class="form-control" name="name" value="" placeholder="The Joys of Biology"/>
+            <label id="email">Email</label>
+            <input type="email" class="form-control" name="email" value="" placeholder="youremail@mail.com"/>
         </div>
 
         <div class="form-group">
-            <label id="author">Author</label>
-            <input type="text" class="form-control" name="author" value="" placeholder="Tom Sawyer"/>
+            <label id="password">Password</label>
+            <input type="password" class="form-control" name="password" value="" placeholder="Enter Your Password"/>
         </div>
 
-        <div class="form-group">
-            <label id="isbn">ISBN</label>
-            <input type="text" class="form-control" name="isbn" value="" placeholder="0-7645-2641-3"/>
-        </div>
-
-        <div class="form-group">
-            <label id="description">Select Your Major</label>
-            <input type="text" class="form-control" name="description" value="" placeholder="A book on celluar structure"/>
-        </div>
-
-        <div class="form-group">
-            <label id="picture">Upload A Photo</label>
-            <input type="file" name="picture" accept="image/*"/>
-        </div>
-
-        <button type="button" class="btn btn-primary btn-lg" name="listing">Create Book Listing</button>
+        <button type="button" class="btn btn-secondary btn-lg" name="signUp">Sign Up</button>
     </form>
+    <div class="register-text">
+        <p>Not A Member? Why Not Create An Account?</p>
+        <button type="button" class="btn btn-primary btn-lg" name="linkReg" onclick="location.href='http://google.com';">Register</button>
+    </div>
 
 </div>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
