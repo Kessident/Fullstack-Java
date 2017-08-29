@@ -91,6 +91,30 @@ public class ListingController {
         }
     }
 
+    @PostMapping(value = "/create", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity createListingFormData(Integer bookID, Long amount, String condition, String picture, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
+            Book toBeListed = books.findOne(bookID);
+            Condition conditionEnum = Condition.valueOf(condition.toUpperCase());
+
+            Listing newListing = new Listing(toBeListed, conditionEnum, amount, picture);
+            try {
+                loggedIn.addListing(newListing);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.status(BAD_REQUEST).body("User does not own that book");
+            }
+
+            users.save(loggedIn);
+            listings.save(newListing);
+
+            return ResponseEntity.status(CREATED).body("Listing created");
+
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to create a listing");
+        }
+    }
+
     @PostMapping("/create")
     public ResponseEntity createListingNotJSON(HttpSession session) {
         if (session.getAttribute("userID") != null) {
@@ -148,6 +172,34 @@ public class ListingController {
                 }
                 if (json.get("condition") != null) {
                     foundListing.setCondition(Condition.valueOf((json.get("condition").asText()).toUpperCase()));
+                }
+
+                listings.save(foundListing);
+                return ResponseEntity.status(OK).body(new JSONResponse("Listing updated", foundListing));
+            } else {
+                return ResponseEntity.status(UNAUTHORIZED).body("Listing was not created by this user");
+            }
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to edit a listing");
+        }
+    }
+
+    @PutMapping(value = "/{listingID}", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity editAListingFormData(@PathVariable int listingID, Long amount, String condition, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            Listing foundListing = listings.findOne(listingID);
+
+            if (foundListing == null) {
+                return ResponseEntity.status(NOT_FOUND).body("Listing with that ID not found");
+            }
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
+
+            if (loggedIn.getBooksForSale().contains(foundListing)) {
+                if (amount != null) {
+                    foundListing.setAskingPrice(amount);
+                }
+                if (condition != null) {
+                    foundListing.setCondition(Condition.valueOf(condition.toUpperCase()));
                 }
 
                 listings.save(foundListing);
