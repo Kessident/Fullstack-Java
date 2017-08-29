@@ -414,7 +414,7 @@ Create a new transaction|POST|/api/transaction/create
 ### Create a new transaction
 #### Request
     POST  /api/transaction/create
-    { “sellerID” : userID, “buyerID”: userID, “bookSold”: BookID, “amountSoldFor”: Long (Dollar amount)}
+    { “sellerID” : userID, “buyerID”: userID, “bookSoldID”: BookID, “amountSoldFor”: Long (Dollar amount)}
 #### Response
     HTTP/1.1 201 CREATED
     Content-Type: application/json

@@ -74,7 +74,34 @@ public class TransactionController {
 
         transactions.save(newTrans);
 
-        return ResponseEntity.status(CREATED).body(new JSONResponse("success", newTrans));
+        return ResponseEntity.status(CREATED).body(new JSONResponse("Transaction created", newTrans));
+    }
+
+    @PostMapping(value = "/create",  consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity createNewTransactionFormData(Integer sellerID, Integer buyerID, Integer bookSoldID, Long amountSoldFor) {
+        if (sellerID == null || buyerID == null || bookSoldID == null || amountSoldFor == null){
+            return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields(sellerID, buyerID, bookSoldID, amountSoldFor)");
+        }
+        User seller = users.findOne(sellerID);
+        User buyer = users.findOne(buyerID);
+        Book bookSold = books.findOne(bookSoldID);
+
+        if (seller == null){
+            return ResponseEntity.status(BAD_REQUEST).body("User with that ID not found");
+        } else if (buyer == null){
+            return ResponseEntity.status(BAD_REQUEST).body("User with that ID not found");
+        } else if (bookSold == null){
+            return ResponseEntity.status(BAD_REQUEST).body("Book with that ID not found");
+        }
+
+        Transaction newTrans = new Transaction();
+        newTrans.setSeller(seller);
+        newTrans.setBuyer(buyer);
+        newTrans.setBookSold(bookSold);
+        newTrans.setAmountSoldFor(amountSoldFor);
+
+        transactions.save(newTrans);
+        return ResponseEntity.status(CREATED).body(new JSONResponse("Transaction created", newTrans));
     }
 
     @PostMapping("/create")
