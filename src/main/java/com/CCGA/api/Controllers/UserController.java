@@ -102,6 +102,33 @@ public class UserController {
         return ResponseEntity.status(CREATED).body(new JSONResponse("User successfully registered", null));
     }
 
+    @PostMapping(value = "/register", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity registerNewUserFormData(String name, String email, String password, Integer majorID, Integer schoolID){
+        if ((name == null || name.isEmpty()) || (email == null || email.isEmpty()) || (password == null || password.isEmpty()) || (majorID == null) || (schoolID == null)){
+            return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields (name, email, password, majorID, schoolID)");
+        } else if (password.length() < 8){
+            return ResponseEntity.status(BAD_REQUEST).body("Password must be at least 8 characters");
+        }
+
+        Major major = majors.findOne(majorID);
+        if (major == null){
+            return ResponseEntity.status(BAD_REQUEST).body("No major with that ID found");
+        }
+        School school = schools.findOne(schoolID);
+        if (school == null){
+            return ResponseEntity.status(BAD_REQUEST).body("No school with that ID found");
+        }
+
+        User registeringUser = new User();
+        registeringUser.setName(name);
+        registeringUser.setEmail(email);
+        registeringUser.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
+        registeringUser.setSchool(school);
+        registeringUser.setMajor(major);
+        users.save(registeringUser);
+        return ResponseEntity.status(CREATED).body(new JSONResponse("User successfully registered", registeringUser));
+    }
+
     @PostMapping("/register")
     public ResponseEntity registerNotJSON(){
         return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
