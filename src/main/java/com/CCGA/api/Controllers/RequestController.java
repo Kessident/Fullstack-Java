@@ -1,9 +1,6 @@
 package com.CCGA.api.Controllers;
 
-import com.CCGA.api.Models.Book;
-import com.CCGA.api.Models.JSONResponse;
-import com.CCGA.api.Models.Request;
-import com.CCGA.api.Models.User;
+import com.CCGA.api.Models.*;
 import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.RequestRepo;
@@ -128,6 +125,48 @@ public class RequestController {
                     requests.save(newRequest);
                     books.save(requested);
                     return ResponseEntity.status(CREATED).body(new JSONResponse("Request created", newRequest));
+                } else {
+                    return ResponseEntity.status(BAD_REQUEST).body("Please supply an ISBN number to search for, or a \"name\", \"author\", \"isbn\", and \"majorID\" to create a new book");
+                }
+            }
+
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to create a listing");
+        }
+    }
+
+    //Create a new request for a book from logged in user
+    @PostMapping(value = "/create", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity createBookRequestFormData(Integer bookID, String name, String author, String isbn, Integer majorID, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
+
+            Book requested;
+            if (bookID != null) {
+                requested = books.findOne(bookID);
+
+                Request newRequest = new Request(requested, loggedIn);
+                requests.save(newRequest);
+
+                return ResponseEntity.status(CREATED).body(new JSONResponse("Request created", newRequest));
+            } else /*No ISBN provided*/ {
+                if (name != null && author != null && isbn != null && majorID != null) {
+                    Major major = majors.findOne(majorID);
+                    if (major != null) {
+                        requested = new Book();
+                        requested.setName(name);
+                        requested.setAuthor(author);
+                        requested.setIsbn(isbn);
+                        requested.setMajor(major);
+                        Request newRequest = new Request(requested, loggedIn);
+
+                        requests.save(newRequest);
+                        books.save(requested);
+
+                        return ResponseEntity.status(CREATED).body(new JSONResponse("Request created", newRequest));
+                    } else {
+                        return ResponseEntity.status(BAD_REQUEST).body("Major with provided majorID not found.");
+                    }
                 } else {
                     return ResponseEntity.status(BAD_REQUEST).body("Please supply an ISBN number to search for, or a \"name\", \"author\", \"isbn\", and \"majorID\" to create a new book");
                 }
