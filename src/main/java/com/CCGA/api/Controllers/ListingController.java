@@ -66,7 +66,7 @@ public class ListingController {
                     return ResponseEntity.status(BAD_REQUEST).body("Please provided all required fields");
                 }
             } catch (Exception e) {
-                return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Error processing request, please try again");
             }
 
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
@@ -126,16 +126,21 @@ public class ListingController {
     @PutMapping(value = "/{listingID}", consumes = "application/json")
     public ResponseEntity editAListing(@PathVariable int listingID, @RequestBody String editedListing, HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            User loggedIn = users.findOne((int) session.getAttribute("userID"));
             Listing foundListing = listings.findOne(listingID);
-            if (loggedIn.getBooksForSale().contains(foundListing)) {
 
+            if (foundListing == null) {
+                return ResponseEntity.status(NOT_FOUND).body("Listing with that ID not found");
+            }
+
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
+
+            if (loggedIn.getBooksForSale().contains(foundListing)) {
                 JsonNode json;
 
                 try {
                     json = processJSON(editedListing);
                 } catch (Exception e) {
-                    return ResponseEntity.status(BAD_REQUEST).body("Error processing request, please try again");
+                    return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Error processing request, please try again");
                 }
 
                 if (json.get("amount") != null) {

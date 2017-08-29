@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class TransactionController {
         return ResponseEntity.status(OK).body(new JSONResponse("success", transaction));
     }
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create",  consumes = "application/json")
     public ResponseEntity createNewTransaction(@RequestBody String transactionAsString) {
         JsonNode transactionAsJson;
 
@@ -74,6 +75,15 @@ public class TransactionController {
         transactions.save(newTrans);
 
         return ResponseEntity.status(CREATED).body(new JSONResponse("success", newTrans));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity createTransactionNotJSON(HttpSession session){
+        if (session.getAttribute("userID") != null) {
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+        }
     }
 
 }
