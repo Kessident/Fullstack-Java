@@ -8,13 +8,19 @@
     <title>College Book Buy</title>
 </head>
 <body>
-<nav class="nav justify-content-center">
-    <a class="nav-link active" href="#">Home</a>
-    <a class="nav-link" href="#">Register</a>
-    <a class="nav-link" href="#">Sign In</a>
-    <a class="nav-link" href="#">Books</a>
-    <a class="nav-link" href="#">Contact Us</a>
-</nav>
+  <nav class="nav navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="main-nav">
+      <p class="navbar-brand">College Book Buy</p>
+      <a class="nav-link active" href="#">Home</a>
+      <a class="nav-link" href="#">Register</a>
+      <a class="nav-link" href="#">Sign In</a>
+      <a class="nav-link" href="#">Books</a>
+      <a class="nav-link" href="#">Contact Us</a>
+    </div>
+  </nav>
 <div class="container">
     <h1>Sign In</h1>
     <form action="#" method="post">
@@ -28,11 +34,11 @@
             <input type="password" class="form-control" name="password" value="" placeholder="Enter Your Password"/>
         </div>
 
-        <button type="button" class="btn btn-primary btn-lg" name="signUp">Sign Up</button>
+        <button type="button" class="btn btn-secondary btn-lg" name="signUp">Sign Up</button>
     </form>
     <div class="register-text">
         <p>Not A Member? Why Not Create An Account?</p>
-        <button type="button" class="btn btn-secondary btn-lg" name="linkReg" onclick="location.href='http://google.com';">Register</button>
+        <button type="button" class="btn btn-primary btn-lg" name="linkReg" onclick="location.href='http://google.com';">Register</button>
     </div>
 
 </div>

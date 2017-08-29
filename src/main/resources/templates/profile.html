@@ -8,36 +8,40 @@
     <title>College Book Buy</title>
 </head>
 <body>
-<nav class="nav justify-content-center">
-    <a class="nav-link active" href="#">Home</a>
-    <a class="nav-link" href="#">Register</a>
-    <a class="nav-link" href="#">Sign In</a>
-    <a class="nav-link" href="#">Books</a>
-    <a class="nav-link" href="#">Contact Us</a>
-</nav>
+  <nav class="nav navbar-expand-lg navbar-dark bg-dark">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="main-nav">
+      <p class="navbar-brand">College Book Buy</p>
+      <a class="nav-link active" href="#">Home</a>
+      <a class="nav-link" href="#">Register</a>
+      <a class="nav-link" href="#">Sign In</a>
+      <a class="nav-link" href="#">Books</a>
+      <a class="nav-link" href="#">Contact Us</a>
+    </div>
+  </nav>
 <div class="container">
-    <div class="row">
-        <div class="col profile-section">
-            <img src="" alt=""/>
+    <div class="row profile-pic-section">
+        <div class="col profile-section section-one">
+            <img class="profilePic" src="../static/batman.jpg" alt="default picture"/>
             <p>rankings</p>
-            <button type="button" name="linkReg" onclick="#;">Update Profile</button>
+            <button type="button" name="linkReg" onclick="#;">Update Profile Picture</button>
         </div>
 
-        <div class="col profile-section">
-            <span>Name</span><span>User name</span><br/>
-            <span>School</span><span>school name</span><br/>
-            <span>Major</span><span>major</span><br/>
+        <div class="col profile-section section-two">
+            <span><strong>Name:</strong></span><span>User name</span><br/>
+            <span><strong>School:</strong></span><span>school name</span><br/>
+            <span><strong>Major:</strong></span><span>major</span><br/>
             <button type="button" name="linkReg" onclick="#;">Update Profile</button>
         </div>
     </div>
 
     <div class="transaction-list">
-        <h3>Transactions</h3>
-        <ul>
-            <li>Book One</li>
-            <li>Book Two</li>
-            <li>Book Three</li>
-        </ul>
+      <h3>Transactions</h3>
+      <p>Book One</p>
+      <p>Book Two</p>
+      <p>Book Three</p>
     </div>
     <button type="button" class="btn btn-danger profile-delete" name="delete">Delete Account</button>
 </div>
