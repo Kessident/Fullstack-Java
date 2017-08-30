@@ -33,7 +33,7 @@ public class SchoolController {
     @GetMapping("/{ID}")
     public ResponseEntity getASchool(@PathVariable int schoolID) {
         School foundSchool = schools.findOne(schoolID);
-        if (foundSchool == null){
+        if (foundSchool == null) {
             return ResponseEntity.status(NOT_FOUND).build();
         } else {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", foundSchool));
