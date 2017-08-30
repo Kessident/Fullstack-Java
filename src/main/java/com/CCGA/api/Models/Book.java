@@ -3,7 +3,7 @@ package com.CCGA.api.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "books")
@@ -32,14 +32,14 @@ public class Book {
     private Major major;
 
     @Column @JsonIgnore
-    private LocalTime createdAt;
+    private LocalDateTime createdAt;
 
     @Column @JsonIgnore
-    private LocalTime updatedAt;
+    private LocalDateTime updatedAt;
 
     public Book() {
-        createdAt = LocalTime.now();
-        updatedAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public Book(String name, String author, String isbn, String description, String picture, Major major) {
@@ -49,8 +49,8 @@ public class Book {
         this.description = description;
         this.picture = picture;
         this.major = major;
-        createdAt = LocalTime.now();
-        updatedAt = LocalTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
 
     public int getBookID() {
@@ -109,19 +109,19 @@ public class Book {
         this.major = major;
     }
 
-    public LocalTime getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalTime createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalTime getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalTime updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 

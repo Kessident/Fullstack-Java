@@ -66,9 +66,9 @@ public class MessageController {
     @PostMapping("/{userID}/create")
     public ResponseEntity createNewMessageMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body(new JSONResponse("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"",null));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that",null));
         }
     }
 
@@ -86,7 +86,7 @@ public class MessageController {
             return ResponseEntity.status(OK)
                 .body(new JSONResponse("success", allContacts));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that",null));
         }
     }
 
