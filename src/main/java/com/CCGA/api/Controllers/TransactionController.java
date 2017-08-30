@@ -78,7 +78,7 @@ public class TransactionController {
 
             return ResponseEntity.status(CREATED).body(new JSONResponse("Transaction created", newTrans));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
     }
 
@@ -87,18 +87,18 @@ public class TransactionController {
         if (session.getAttribute("userID") != null) {
 
             if (sellerID == null || buyerID == null || bookSoldID == null || amountSoldFor == null) {
-                return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields(sellerID, buyerID, bookSoldID, amountSoldFor)");
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please supply all required fields(sellerID, buyerID, bookSoldID, amountSoldFor)", null));
             }
             User seller = users.findOne(sellerID);
             User buyer = users.findOne(buyerID);
             Book bookSold = books.findOne(bookSoldID);
 
             if (seller == null) {
-                return ResponseEntity.status(BAD_REQUEST).body("User with that ID not found");
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User with that ID not found", null));
             } else if (buyer == null) {
-                return ResponseEntity.status(BAD_REQUEST).body("User with that ID not found");
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User with that ID not found", null));
             } else if (bookSold == null) {
-                return ResponseEntity.status(BAD_REQUEST).body("Book with that ID not found");
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Book with that ID not found", null));
             }
 
             Transaction newTrans = new Transaction();
@@ -110,16 +110,16 @@ public class TransactionController {
             transactions.save(newTrans);
             return ResponseEntity.status(CREATED).body(new JSONResponse("Transaction created", newTrans));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
     }
 
     @PostMapping("/create")
     public ResponseEntity createTransactionMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body(new JSONResponse("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"", null));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
     }
 
