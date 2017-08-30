@@ -243,7 +243,7 @@ Lookup Book by either ISBN or name|POST|/api/book/search
 
 ### Get a list of all books owned by signed in user | GET | /api/book/all
 #### Request
-    GET | /api/user/book/all
+    GET | /api/book/all
 #### Response
     HTTP/1.1 200 OK
     Content-Type: application/json
@@ -256,7 +256,7 @@ Lookup Book by either ISBN or name|POST|/api/book/search
 
 ### Get a particular book from a user's collection
 #### Request
-    GET | /api/user/book/owned/{BookID}
+    GET | /api/book/owned/{BookID}
 #### Response
     HTTP/1.1 200 OK
     { "data": Book }
@@ -267,7 +267,7 @@ Lookup Book by either ISBN or name|POST|/api/book/search
 
 ### Add a book to collection
 #### Request
-    POST | /api/user/book/add
+    POST | /api/book/owned/add
     { "isbn" : String } || { "bookID": Integer }
 #### Response
     HTTP/1.1 201 Created
@@ -279,7 +279,7 @@ Lookup Book by either ISBN or name|POST|/api/book/search
 
 ### Delete an owned book
 #### Request
-    DELETE | /api/user/book/{BookID}/delete
+    DELETE | /api/book/owned/{BookID}
 #### Response
     HTTP/1.1 204 No Content
     
