@@ -147,33 +147,24 @@ public class BookController {
             } catch (Exception e) {
                 return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error processing request, please try again", null));
             }
+            List<Book> bookList = new ArrayList<>();
 
             if (json.get("isbn") != null) {
                 Book book = books.findByIsbn(json.get("isbn").asText());
-                if (book == null) {
-                    // TODO: 8/23/17 Probably change this to specify people can/should submit missing book info
-                    return ResponseEntity.status(OK).body(new JSONResponse("Book does not exist in our server", null));
-                } else {
-                    return ResponseEntity.status(OK).body(new JSONResponse("Book Found", book));
+                if (book != null) {
+                    bookList.add(book);
                 }
-
             } else if (json.get("name") != null) {
                 Book book = books.findByName(json.get("name").asText());
-                if (book == null) {
-                    // TODO: 8/23/17 Probably change this to specify people can/should submit missing book info
-                    return ResponseEntity.status(OK).body(new JSONResponse("Book does not exist in our server", null));
-                } else {
-                    return ResponseEntity.status(OK).body(new JSONResponse("Book Found", book));
+                if (book != null) {
+                    bookList.add(book);
                 }
             } else if (json.get("author") != null) {
-                List<Book> booksFoundByAuthor = books.findAllByAuthor(json.get("author").asText());
-                if (booksFoundByAuthor != null) {
-                    // TODO: 8/23/17 Probably change this to specify people can/should submit missing book info
-                    return ResponseEntity.status(OK).body(new JSONResponse("No Books found by that author found", null));
-                }
+                bookList.addAll(books.findAllByAuthor(json.get("author").asText()));
+            } else {
+                books.findAll().forEach(bookList::add);
             }
-            return ResponseEntity.status(OK).body(new JSONResponse("success", books.findAll()));
-//            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provide an ISBN, name, or author to search for",null));
+            return ResponseEntity.status(OK).body(new JSONResponse("success", bookList));
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
