@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -58,7 +59,29 @@ public class BookController {
 
             users.save(loggedIn);
 
-            return ResponseEntity.status(CREATED).header("Content-Type", "application/json").body(new JSONResponse("Book added to collection", added));
+            return ResponseEntity.status(CREATED).body(new JSONResponse("Book added to collection", added));
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to add a book to your collection.");
+        }
+    }
+
+    @PostMapping(value = "/owned/add", consumes = "application/x-www-form-urlencoded")
+    public ResponseEntity addABookToCollectionFormData(String isbn, Integer bookID, HttpSession session) throws IOException {
+        if (session.getAttribute("userID") != null) {
+            User loggedIn = users.findOne((Integer) session.getAttribute("userID"));
+            Book toBeAdded;
+            if (bookID != null) {
+                toBeAdded = books.findOne(bookID);
+                loggedIn.addBook(toBeAdded);
+            } else if (isbn != null && !isbn.isEmpty()) {
+                toBeAdded = books.findByIsbn(isbn);
+                loggedIn.addBook(toBeAdded);
+            } else {
+                return ResponseEntity.status(BAD_REQUEST).body("Please provide either a bookID or an isbn to search for");
+            }
+            users.save(loggedIn);
+
+            return ResponseEntity.status(CREATED).body(new JSONResponse("Book added to collection", toBeAdded));
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to add a book to your collection.");
         }
@@ -67,7 +90,7 @@ public class BookController {
     @PostMapping("/owned/add")
     public ResponseEntity createListingNotJSON(HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
@@ -109,7 +132,7 @@ public class BookController {
         }
     }
 
-    @PostMapping("/search")
+    @PostMapping(value = "/search", consumes = "application/json")
     public ResponseEntity bookSearch(@RequestBody String bookSearchJSON, HttpSession session) {
         if (session.getAttribute("userID") != null) {
 
@@ -151,21 +174,27 @@ public class BookController {
         }
     }
 
-    @GetMapping("/search/{isbn}")
-    public ResponseEntity searchBookByISBN(@PathVariable String isbn, HttpSession session) {
+    @PostMapping(value = "/search", consumes = "application/x-www-form-urlencoded")
+    public ResponseEntity bookSearchForm(String isbn, String name, String author, Integer bookID, HttpSession session) {
         if (session.getAttribute("userID") != null) {
 
-            Book book = books.findByIsbn(isbn);
-            if (book == null) {
-                // TODO: 8/23/17 Probably change this to specify people should submit missing book info
-                return ResponseEntity.status(NOT_FOUND).body("Book does not exist in our server");
-            } else {
-                return ResponseEntity.status(OK).body(new JSONResponse("Book Found", book));
+            List<Book> booksFound = new ArrayList<>();
+            if (bookID != null) {
+                booksFound.add(books.findOne(bookID));
+            } else if (!(isbn == null || isbn.isEmpty())) {
+                booksFound.add(books.findByIsbn(isbn));
+            } else if (!(name == null || name.isEmpty())) {
+                booksFound.add(books.findByName(name));
+            } else if (!(author == null || author.isEmpty())) {
+                booksFound.addAll(books.findAllByAuthor(author));
             }
+
+            return ResponseEntity.status(OK).body(new JSONResponse("Success", booksFound));
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
     }
+
 
 
     private JsonNode processJSON(String toBeProcessed) throws Exception {

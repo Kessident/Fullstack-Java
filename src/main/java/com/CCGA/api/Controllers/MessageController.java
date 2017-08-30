@@ -66,7 +66,7 @@ public class MessageController {
     @PostMapping("/{userID}/create")
     public ResponseEntity createNewMessageNotJSON(HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }

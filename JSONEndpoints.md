@@ -239,8 +239,7 @@ Get a list of all books owned by signed in user | GET | /api/book/all
 Get a particular book from a user's collection | GET | /api/book/owned/{bookID}
 Add a book to collection | POST | /api/book/owned/add
 Delete an owned book | DELETE | /api/book/owned/{bookID}
-Lookup Book by ISBN|GET|/api/book/search/{ISBN}
-Lookup Book by either ISBN or name|GET|/api/book/search
+Lookup Book by either ISBN or name|POST|/api/book/search
 
 ### Get a list of all books owned by signed in user | GET | /api/book/all
 #### Request
@@ -269,7 +268,7 @@ Lookup Book by either ISBN or name|GET|/api/book/search
 ### Add a book to collection
 #### Request
     POST | /api/user/book/add
-    { "isbn" : String }
+    { "isbn" : String } || { "bookID": Integer }
 #### Response
     HTTP/1.1 201 Created
     { "data": Book }
@@ -286,34 +285,16 @@ Lookup Book by either ISBN or name|GET|/api/book/search
     
     HTTP/1.1 401 Unauthorized
 
-### Lookup book by ISBN
-#### Request
-    GET  /api/book/search/{ISBN}
-#### Response
-    HTTP/1.1 200 OK
-    Content-Type: application/json
-	{ “data” : Book }
-
-    HTTP/1.1 404 No Content
-	Sent if valid ISBN, but no book found
-
-	HTTP/1.1 400 Bad Request
-	Sent if invalid ISBN
-
 ### Lookup book by other criteria
 #### Request
-	GET /api/book/search
-	{ “name”: String, “isbn”: String }
+	POST /api/book/search
+	{ “name”: String, “author”: String, "isbn": String, "bookID": Integer } parameters optional, isbn preferred
 #### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
-	{ “data”: Book }
-
-	HTTP/1.1 404 Not Found
-	Sent when request was valid, but no book was found
-
-	HTTP/1.1 400 Bad Request
-
+	{ “data”: [ Book ] }
+	
+	HTTP/1.1 401 Unauthorized
 
 ## Listing Routes
 

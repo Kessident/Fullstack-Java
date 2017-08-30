@@ -142,7 +142,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity registerNotJSON() {
-        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
     }
 
     @PostMapping(value = "/login", consumes = "application/json")
@@ -206,7 +206,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity loginNotJSON() {
-        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
     }
 
     @PutMapping(value = "/update", consumes = "application/json")
@@ -268,7 +268,7 @@ public class UserController {
 
     @PutMapping("/update")
     public ResponseEntity updateNotJSON() {
-        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+        return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
     }
 
     @DeleteMapping("/delete")
