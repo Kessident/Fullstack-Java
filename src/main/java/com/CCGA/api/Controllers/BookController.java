@@ -88,7 +88,7 @@ public class BookController {
     }
 
     @PostMapping("/owned/add")
-    public ResponseEntity createListingNotJSON(HttpSession session) {
+    public ResponseEntity createListingMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
             return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {

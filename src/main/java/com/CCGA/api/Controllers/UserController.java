@@ -141,7 +141,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerNotJSON() {
+    public ResponseEntity registerMediaNotSupported() {
         return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
     }
 
@@ -205,7 +205,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity loginNotJSON() {
+    public ResponseEntity loginMediaNotSupported() {
         return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
     }
 
@@ -267,7 +267,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity updateNotJSON() {
+    public ResponseEntity updateMediaNotSupported() {
         return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
     }
 

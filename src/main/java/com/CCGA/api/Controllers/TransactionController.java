@@ -115,7 +115,7 @@ public class TransactionController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity createTransactionNotJSON(HttpSession session) {
+    public ResponseEntity createTransactionMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
             return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {

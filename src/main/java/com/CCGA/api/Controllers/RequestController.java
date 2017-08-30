@@ -178,7 +178,7 @@ public class RequestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity createBookRequestNotJSON(HttpSession session) {
+    public ResponseEntity createBookRequestMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
             return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
         } else {

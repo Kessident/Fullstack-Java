@@ -116,7 +116,7 @@ public class ListingController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity createListingNotJSON(HttpSession session) {
+    public ResponseEntity createListingMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
             return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {
@@ -213,7 +213,7 @@ public class ListingController {
     }
 
     @PutMapping("/{listingID")
-    public ResponseEntity editListingNotJSON(HttpSession session) {
+    public ResponseEntity editListingMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
             return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {

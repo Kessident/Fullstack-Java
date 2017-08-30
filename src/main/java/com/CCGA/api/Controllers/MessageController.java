@@ -64,7 +64,7 @@ public class MessageController {
     }
 
     @PostMapping("/{userID}/create")
-    public ResponseEntity createNewMessageNotJSON(HttpSession session) {
+    public ResponseEntity createNewMessageMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
             return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {
