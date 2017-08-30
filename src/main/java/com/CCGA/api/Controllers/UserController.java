@@ -4,7 +4,6 @@ import com.CCGA.api.Models.JSONResponse;
 import com.CCGA.api.Models.Major;
 import com.CCGA.api.Models.School;
 import com.CCGA.api.Models.User;
-import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.SchoolRepo;
 import com.CCGA.api.Repositorys.UserRepo;
@@ -28,15 +27,16 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/user")
 public class UserController {
 
-    @Autowired
-    UserRepo users;
-    @Autowired
-    SchoolRepo schools;
-    @Autowired
-    MajorRepo majors;
-    @Autowired
-    BookRepo books;
+    private UserRepo users;
+    private SchoolRepo schools;
+    private MajorRepo majors;
 
+    @Autowired
+    public UserController(UserRepo users, SchoolRepo schools, MajorRepo majors) {
+        this.users = users;
+        this.schools = schools;
+        this.majors = majors;
+    }
 
     @PostMapping(value = "/register", consumes = "application/json")
     public ResponseEntity registerNewUser(@RequestBody String registeringUser) {
@@ -48,56 +48,12 @@ public class UserController {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again", null));
         }
 
-        if (json == null) {
+        if (!(json.has("name") && json.has("password") && json.has("passwordConfirm") && json.has("schoolID") && json.has("majorID"))) {
             return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please supply all required fields (name, email, password, majorID, schoolID)", null));
-        } else if (json.get("email") == null) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provide an email", null));
-        } else if (users.findByEmail(json.get("email").asText()) != null) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User already exists", null));
         }
 
-        try {
-            json.get("name");
-            json.get("password");
-            json.get("passwordConfirm");
-            json.get("schoolID");
-            json.get("majorID");
-        } catch (NullPointerException e) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please supply all required fields (name, email, password, majorID, schoolID)", null));
-        } catch (Exception e) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Bad Request", null));
-        }
+        List<String> errors = checkRegistrationErrors(json);
 
-        List<String> errors = new ArrayList<>();
-        if (json.get("name").asText().isEmpty()) {
-            errors.add("Name must not be empty");
-        }
-        if (json.get("email").asText().isEmpty()) {
-            errors.add("Email must not be empty");
-        }
-        if (json.get("password").asText().isEmpty()) {
-            errors.add("Password must not be empty");
-        }
-        if (!json.get("passwordConfirm").asText().equals(json.get("password").asText())) {
-            errors.add("Password and password Confirm must be the same");
-        }
-        if (json.get("password").asText().length() < 8) {
-            errors.add("Password must be at least 8 characters");
-        }
-        if (json.get("majorID").asText().isEmpty()) {
-            errors.add("MajorID must not be empty");
-        }
-        if (json.get("schoolID").asText().isEmpty()) {
-            errors.add("SchoolID must not be empty");
-        }
-        Major majorExists = majors.findOne(json.get("majorID").asInt());
-        School schoolExists = schools.findOne(json.get("schoolID").asInt());
-        if (majorExists == null) {
-            errors.add("Major with that ID not found");
-        }
-        if (schoolExists == null) {
-            errors.add("School with that ID not found");
-        }
         if (!errors.isEmpty()) {
             return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error(s) registering user", errors));
         }
@@ -117,8 +73,10 @@ public class UserController {
         if ((name == null || name.isEmpty()) || (email == null || email.isEmpty()) || (password == null || password.isEmpty()) || (passwordConfirm == null || passwordConfirm.isEmpty()) || (majorID
             == null) || (schoolID == null)) {
             return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please supply all required fields (name, email, password, passwordConfirm, majorID, schoolID)", null));
-        } else if (password.length() < 8 || !password.equals(passwordConfirm)) {
+        } else if (password.length() < 8) {
             return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Password must be at least 8 characters", null));
+        } else if (!password.equals(passwordConfirm)) {
+            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Passwords must match", null));
         }
 
         Major major = majors.findOne(majorID);
@@ -131,7 +89,7 @@ public class UserController {
         }
         User doesExist = users.findByEmail(email);
         if (doesExist != null) {
-            return ResponseEntity.status(OK).body(new JSONResponse("User already exists", null));
+            return ResponseEntity.status(CONFLICT).body(new JSONResponse("User already exists", null));
         }
 
         User registeringUser = new User();
@@ -233,10 +191,16 @@ public class UserController {
                 tobeUpdated.setName(json.get("name").asText());
             }
             if (json.get("schoolID") != null) {
-                tobeUpdated.setSchool(schools.findOne(json.get("schoolID").asInt()));
+                School schoolUpdate = schools.findOne(json.get("schoolID").asInt());
+                if (schoolUpdate != null) {
+                    tobeUpdated.setSchool(schoolUpdate);
+                }
             }
             if (json.get("majorID") != null) {
-                tobeUpdated.setMajor(majors.findOne(json.get("majorID").asInt()));
+                Major majorUpdate = majors.findOne(json.get("majorID").asInt());
+                if (majorUpdate != null) {
+                    tobeUpdated.setMajor(majorUpdate);
+                }
             }
 
             tobeUpdated.setUpdatedAt(LocalDateTime.now());
@@ -254,11 +218,13 @@ public class UserController {
             if (name != null) {
                 tobeUpdated.setName(name);
             }
-            if (schoolID != null) {
-                tobeUpdated.setSchool(schools.findOne(schoolID));
+            School schoolUpdate = schools.findOne(schoolID);
+            if (schoolUpdate != null) {
+                tobeUpdated.setSchool(schoolUpdate);
             }
-            if (majorID != null) {
-                tobeUpdated.setMajor(majors.findOne(majorID));
+            Major majorUpdate = majors.findOne(majorID);
+            if (majorUpdate != null) {
+                tobeUpdated.setMajor(majorUpdate);
             }
 
             tobeUpdated.setUpdatedAt(LocalDateTime.now());
@@ -311,5 +277,43 @@ public class UserController {
         });
 
         return ResponseEntity.status(OK).body(new JSONResponse("success", allUsers));
+    }
+
+    private List<String> checkRegistrationErrors(JsonNode json) {
+        List<String> errors = new ArrayList<>();
+        if (json.get("name").asText().isEmpty()) {
+            errors.add("Name must not be empty");
+        }
+        if (json.get("email").asText().isEmpty()) {
+            errors.add("Email must not be empty");
+        }
+        if (json.get("password").asText().isEmpty()) {
+            errors.add("Password must not be empty");
+        }
+        if (!json.get("passwordConfirm").asText().equals(json.get("password").asText())) {
+            errors.add("Password and password Confirm must be the same");
+        }
+        if (json.get("password").asText().length() < 8) {
+            errors.add("Password must be at least 8 characters");
+        }
+        if (json.get("majorID").asText().isEmpty()) {
+            errors.add("MajorID must not be empty");
+        }
+        if (json.get("schoolID").asText().isEmpty()) {
+            errors.add("SchoolID must not be empty");
+        }
+        Major majorExists = majors.findOne(json.get("majorID").asInt());
+        School schoolExists = schools.findOne(json.get("schoolID").asInt());
+        if (majorExists == null) {
+            errors.add("Major with that ID not found");
+        }
+        if (schoolExists == null) {
+            errors.add("School with that ID not found");
+        }
+        if (users.findByEmail(json.get("email").asText()) != null) {
+            errors.add("User already exists");
+        }
+
+        return errors;
     }
 }

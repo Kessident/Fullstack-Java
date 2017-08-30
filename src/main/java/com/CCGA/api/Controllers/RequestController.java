@@ -23,14 +23,18 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/request")
 public class RequestController {
 
+    private RequestRepo requests;
+    private UserRepo users;
+    private BookRepo books;
+    private MajorRepo majors;
+
     @Autowired
-    RequestRepo requests;
-    @Autowired
-    UserRepo users;
-    @Autowired
-    BookRepo books;
-    @Autowired
-    MajorRepo majors;
+    public RequestController(RequestRepo requests, UserRepo users, BookRepo books, MajorRepo majors) {
+        this.requests = requests;
+        this.users = users;
+        this.books = books;
+        this.majors = majors;
+    }
 
     //Get a list of all requests
     @GetMapping("/all")

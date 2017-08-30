@@ -1,7 +1,9 @@
 package com.CCGA.api.Controllers;
 
 import com.CCGA.api.Models.*;
-import com.CCGA.api.Repositorys.*;
+import com.CCGA.api.Repositorys.BookRepo;
+import com.CCGA.api.Repositorys.ListingRepo;
+import com.CCGA.api.Repositorys.UserRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +19,16 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/listing")
 public class ListingController {
 
+    private ListingRepo listings;
+    private BookRepo books;
+    private UserRepo users;
+
     @Autowired
-    ListingRepo listings;
-    @Autowired
-    BookRepo books;
-    @Autowired
-    UserRepo users;
-    @Autowired
-    MajorRepo majors;
-    @Autowired
-    SchoolRepo schools;
+    public ListingController(ListingRepo listings, BookRepo books, UserRepo users) {
+        this.listings = listings;
+        this.books = books;
+        this.users = users;
+    }
 
     @GetMapping("/all")
     public ResponseEntity getAllBooksForSale(HttpSession session) {

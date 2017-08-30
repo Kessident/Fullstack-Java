@@ -103,12 +103,12 @@ rating | ```Number``` | rating of `issuer`'s interaction with `about` |
 
 
 # Routes
-## All routes that return data have
+## All routes have
 
 Key | Value Type | Description | Example
 ---|---|---|---
-message  | ```String``` | message | "success", "failure", "You must be logged in to do that"
-data | ```Object``` | any data that is returned  |
+message  | ```String``` | message | "success", "failure", "You must be logged in to do that", etc
+data | ```Object``` | any data that is returned
 
 ## School Routes
 
