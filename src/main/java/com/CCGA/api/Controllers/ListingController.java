@@ -91,10 +91,34 @@ public class ListingController {
         }
     }
 
-    @PostMapping("/create")
-    public ResponseEntity createListingNotJSON(HttpSession session) {
+    @PostMapping(value = "/create", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity createListingFormData(Integer bookID, Long amount, String condition, String picture, HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
+            Book toBeListed = books.findOne(bookID);
+            Condition conditionEnum = Condition.valueOf(condition.toUpperCase());
+
+            Listing newListing = new Listing(toBeListed, conditionEnum, amount, picture);
+            try {
+                loggedIn.addListing(newListing);
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.status(BAD_REQUEST).body("User does not own that book");
+            }
+
+            users.save(loggedIn);
+            listings.save(newListing);
+
+            return ResponseEntity.status(CREATED).body("Listing created");
+
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to create a listing");
+        }
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity createListingMediaNotSupported(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
@@ -160,10 +184,38 @@ public class ListingController {
         }
     }
 
-    @PutMapping("/{listingID")
-    public ResponseEntity editListingNotJSON(HttpSession session) {
+    @PutMapping(value = "/{listingID}", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity editAListingFormData(@PathVariable int listingID, Long amount, String condition, HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+            Listing foundListing = listings.findOne(listingID);
+
+            if (foundListing == null) {
+                return ResponseEntity.status(NOT_FOUND).body("Listing with that ID not found");
+            }
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
+
+            if (loggedIn.getBooksForSale().contains(foundListing)) {
+                if (amount != null) {
+                    foundListing.setAskingPrice(amount);
+                }
+                if (condition != null) {
+                    foundListing.setCondition(Condition.valueOf(condition.toUpperCase()));
+                }
+
+                listings.save(foundListing);
+                return ResponseEntity.status(OK).body(new JSONResponse("Listing updated", foundListing));
+            } else {
+                return ResponseEntity.status(UNAUTHORIZED).body("Listing was not created by this user");
+            }
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to edit a listing");
+        }
+    }
+
+    @PutMapping("/{listingID")
+    public ResponseEntity editListingMediaNotSupported(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }

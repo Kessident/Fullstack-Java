@@ -45,42 +45,79 @@ public class TransactionController {
         return ResponseEntity.status(OK).body(new JSONResponse("success", transaction));
     }
 
-    @PostMapping(value = "/create",  consumes = "application/json")
-    public ResponseEntity createNewTransaction(@RequestBody String transactionAsString) {
-        JsonNode transactionAsJson;
+    @PostMapping(value = "/create", consumes = "application/json")
+    public ResponseEntity createNewTransaction(@RequestBody String transactionAsString, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
 
-        try {
-            transactionAsJson = new ObjectMapper().readTree(new StringReader(transactionAsString));
-            if (transactionAsJson == null) {
-                throw new IOException();
+            JsonNode transactionAsJson;
+
+            try {
+                transactionAsJson = new ObjectMapper().readTree(new StringReader(transactionAsString));
+                if (transactionAsJson == null) {
+                    throw new IOException();
+                }
+            } catch (IOException ex) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error", "Error Processing JSON request"));
             }
-        } catch (IOException ex) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error", "Error Processing JSON request"));
+
+            Transaction newTrans = new Transaction();
+
+            try {
+                User seller = users.findOne(transactionAsJson.get("sellerID").asInt());
+                User buyer = users.findOne(transactionAsJson.get("buyerID").asInt());
+                Book bookSold = books.findOne(transactionAsJson.get("bookSold").asInt());
+                newTrans.setSeller(seller);
+                newTrans.setBuyer(buyer);
+                newTrans.setBookSold(bookSold);
+                newTrans.setAmountSoldFor(transactionAsJson.get("amountSoldFor").asLong());
+            } catch (Exception e) {
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error", "Error reading properties from JSON, Ensure all fields are properly spelled/present and try again"));
+            }
+
+            transactions.save(newTrans);
+
+            return ResponseEntity.status(CREATED).body(new JSONResponse("Transaction created", newTrans));
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
+    }
 
-        Transaction newTrans = new Transaction();
+    @PostMapping(value = "/create", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity createNewTransactionFormData(Integer sellerID, Integer buyerID, Integer bookSoldID, Long amountSoldFor, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
 
-        try {
-            User seller = users.findOne(transactionAsJson.get("sellerID").asInt());
-            User buyer = users.findOne(transactionAsJson.get("buyerID").asInt());
-            Book bookSold = books.findOne(transactionAsJson.get("bookSold").asInt());
+            if (sellerID == null || buyerID == null || bookSoldID == null || amountSoldFor == null) {
+                return ResponseEntity.status(BAD_REQUEST).body("Please supply all required fields(sellerID, buyerID, bookSoldID, amountSoldFor)");
+            }
+            User seller = users.findOne(sellerID);
+            User buyer = users.findOne(buyerID);
+            Book bookSold = books.findOne(bookSoldID);
+
+            if (seller == null) {
+                return ResponseEntity.status(BAD_REQUEST).body("User with that ID not found");
+            } else if (buyer == null) {
+                return ResponseEntity.status(BAD_REQUEST).body("User with that ID not found");
+            } else if (bookSold == null) {
+                return ResponseEntity.status(BAD_REQUEST).body("Book with that ID not found");
+            }
+
+            Transaction newTrans = new Transaction();
             newTrans.setSeller(seller);
             newTrans.setBuyer(buyer);
             newTrans.setBookSold(bookSold);
-            newTrans.setAmountSoldFor(transactionAsJson.get("amountSoldFor").asLong());
-        } catch (Exception e) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error", "Error reading properties from JSON, Ensure all fields are properly spelled/present and try again"));
+            newTrans.setAmountSoldFor(amountSoldFor);
+
+            transactions.save(newTrans);
+            return ResponseEntity.status(CREATED).body(new JSONResponse("Transaction created", newTrans));
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
-
-        transactions.save(newTrans);
-
-        return ResponseEntity.status(CREATED).body(new JSONResponse("success", newTrans));
     }
 
     @PostMapping("/create")
-    public ResponseEntity createTransactionNotJSON(HttpSession session){
+    public ResponseEntity createTransactionMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"");
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
         }
