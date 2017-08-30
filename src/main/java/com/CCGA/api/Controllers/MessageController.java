@@ -24,10 +24,14 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/message")
 public class MessageController {
 
+    private MessageRepo messages;
+    private UserRepo users;
+
     @Autowired
-    MessageRepo messages;
-    @Autowired
-    UserRepo users;
+    public MessageController(MessageRepo messages, UserRepo users) {
+        this.messages = messages;
+        this.users = users;
+    }
 
     @GetMapping("/{userID}/all")
     public ResponseEntity getAllMessagesFromUser(@PathVariable int userID, HttpSession session) {

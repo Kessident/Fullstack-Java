@@ -16,8 +16,12 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/major")
 public class MajorController {
 
+    private MajorRepo majors;
+
     @Autowired
-    MajorRepo majors;
+    public MajorController(MajorRepo majors) {
+        this.majors = majors;
+    }
 
     @GetMapping("/all")
     public ResponseEntity getAllMajors() {

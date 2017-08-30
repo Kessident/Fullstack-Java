@@ -23,10 +23,14 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/book")
 public class BookController {
 
+    private BookRepo books;
+    private UserRepo users;
+
     @Autowired
-    BookRepo books;
-    @Autowired
-    UserRepo users;
+    public BookController(BookRepo books, UserRepo users) {
+        this.books = books;
+        this.users = users;
+    }
 
     @GetMapping(value = "/all")
     public ResponseEntity getAllBooksOwned(HttpSession session) {

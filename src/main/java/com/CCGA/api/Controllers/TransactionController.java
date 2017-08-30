@@ -25,12 +25,16 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/transaction")
 public class TransactionController {
 
+    private TransactionRepo transactions;
+    private UserRepo users;
+    private BookRepo books;
+
     @Autowired
-    TransactionRepo transactions;
-    @Autowired
-    UserRepo users;
-    @Autowired
-    BookRepo books;
+    public TransactionController(TransactionRepo transactions, UserRepo users, BookRepo books) {
+        this.transactions = transactions;
+        this.users = users;
+        this.books = books;
+    }
 
     @GetMapping("/all")
     public ResponseEntity getAllTransactions() {

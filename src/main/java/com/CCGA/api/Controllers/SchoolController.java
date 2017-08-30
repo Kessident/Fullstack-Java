@@ -17,10 +17,14 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/school")
 public class SchoolController {
 
+    private SchoolRepo schools;
+    private MajorRepo majors;
+
     @Autowired
-    SchoolRepo schools;
-    @Autowired
-    MajorRepo majors;
+    public SchoolController(SchoolRepo schools, MajorRepo majors) {
+        this.schools = schools;
+        this.majors = majors;
+    }
 
     @GetMapping("/all")
     public ResponseEntity getAllSchools() {
@@ -30,11 +34,11 @@ public class SchoolController {
         return ResponseEntity.status(OK).body(new JSONResponse("Success", schoolList));
     }
 
-    @GetMapping("/{ID}")
+    @GetMapping("/{schoolID}")
     public ResponseEntity getASchool(@PathVariable int schoolID) {
         School foundSchool = schools.findOne(schoolID);
         if (foundSchool == null) {
-            return ResponseEntity.status(NOT_FOUND).build();
+            return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("school with that ID not found", null));
         } else {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", foundSchool));
         }
