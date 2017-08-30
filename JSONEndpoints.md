@@ -288,7 +288,7 @@ Lookup Book by either ISBN or name|POST|/api/book/search
 ### Lookup book by other criteria
 #### Request
 	POST /api/book/search
-	{ “name”: String, “author”: String, "isbn": String, "bookID": Integer } parameters optional, isbn preferred
+	{ “name”: String, “author”: String, "isbn": String, "bookID": Integer } parameters optional, isbn or bookID preferred
 #### Response
 	HTTP/1.1 200 OK
     Content-Type: application/json
