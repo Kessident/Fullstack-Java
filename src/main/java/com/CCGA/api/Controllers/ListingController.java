@@ -38,7 +38,7 @@ public class ListingController {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).build();
             }
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
     }
 
@@ -47,12 +47,12 @@ public class ListingController {
         if (session.getAttribute("userID") != null) {
             Listing found = listings.findOne(listingID);
             if (found == null) {
-                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("No listing with that ID found",null));
+                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("No listing with that ID found", null));
             } else {
                 return ResponseEntity.status(OK).body(new JSONResponse("Success", found));
             }
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
     }
 
@@ -63,10 +63,10 @@ public class ListingController {
             try {
                 json = processJSON(ListingAsString);
                 if (json.get("bookID") == null || json.get("amount") == null || json.get("condition") == null) {
-                    return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provided all required fields",null));
+                    return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provided all required fields", null));
                 }
             } catch (Exception e) {
-                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again",null));
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again", null));
             }
 
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
@@ -79,15 +79,15 @@ public class ListingController {
             try {
                 loggedIn.addListing(newListing);
             } catch (IllegalArgumentException e) {
-                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User does not own that book",null));
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User does not own that book", null));
             }
 
             users.save(loggedIn);
             listings.save(newListing);
 
-            return ResponseEntity.status(CREATED).body(new JSONResponse("Listing created",null));
+            return ResponseEntity.status(CREATED).body(new JSONResponse("Listing created", null));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
         }
     }
 
@@ -102,25 +102,25 @@ public class ListingController {
             try {
                 loggedIn.addListing(newListing);
             } catch (IllegalArgumentException e) {
-                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User does not own that book",null));
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User does not own that book", null));
             }
 
             users.save(loggedIn);
             listings.save(newListing);
 
-            return ResponseEntity.status(CREATED).body(new JSONResponse("Listing created",null));
+            return ResponseEntity.status(CREATED).body(new JSONResponse("Listing created", null));
 
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
         }
     }
 
     @PostMapping("/create")
     public ResponseEntity createListingMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body(new JSONResponse("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"",null));
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body(new JSONResponse("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"", null));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
     }
 
@@ -130,7 +130,7 @@ public class ListingController {
             Listing foundListing = listings.findOne(listingID);
 
             if (foundListing == null) {
-                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Listing with that ID not found",null));
+                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Listing with that ID not found", null));
             }
 
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
@@ -140,10 +140,10 @@ public class ListingController {
                 users.save(loggedIn);
                 return ResponseEntity.status(NO_CONTENT).build();
             } else {
-                return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("Listing was not created by this user",null));
+                return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("Listing was not created by this user", null));
             }
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to delete a listing",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to delete a listing", null));
         }
     }
 
@@ -153,7 +153,7 @@ public class ListingController {
             Listing foundListing = listings.findOne(listingID);
 
             if (foundListing == null) {
-                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Listing with that ID not found",null));
+                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Listing with that ID not found", null));
             }
 
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
@@ -164,7 +164,7 @@ public class ListingController {
                 try {
                     json = processJSON(editedListing);
                 } catch (Exception e) {
-                    return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again",null));
+                    return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again", null));
                 }
 
                 if (json.get("amount") != null) {
@@ -177,10 +177,10 @@ public class ListingController {
                 listings.save(foundListing);
                 return ResponseEntity.status(OK).body(new JSONResponse("Listing updated", foundListing));
             } else {
-                return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("Listing was not created by this user",null));
+                return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("Listing was not created by this user", null));
             }
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to edit a listing",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to edit a listing", null));
         }
     }
 
@@ -190,7 +190,7 @@ public class ListingController {
             Listing foundListing = listings.findOne(listingID);
 
             if (foundListing == null) {
-                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Listing with that ID not found",null));
+                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Listing with that ID not found", null));
             }
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
 
@@ -205,19 +205,19 @@ public class ListingController {
                 listings.save(foundListing);
                 return ResponseEntity.status(OK).body(new JSONResponse("Listing updated", foundListing));
             } else {
-                return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("Listing was not created by this user",null));
+                return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("Listing was not created by this user", null));
             }
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to edit a listing",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to edit a listing", null));
         }
     }
 
     @PutMapping("/{listingID")
     public ResponseEntity editListingMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body(new JSONResponse("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"",null));
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body(new JSONResponse("Content-Type not supported, please use \"application/json\" or \"application/x-www-form-urlencoded\"", null));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that",null));
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
     }
 
