@@ -14,10 +14,10 @@
   </button>
   <div class="collapse navbar-collapse" id="main-nav">
     <p class="navbar-brand">College Book Buy</p>
-    <a class="nav-link active" href="#">Home</a>
-    <a class="nav-link" href="#">Register</a>
-    <a class="nav-link" href="#">Sign In</a>
-    <a class="nav-link" href="#">Books</a>
+    <a class="nav-link active" href="/api/home">Home</a>
+    <a class="nav-link" href="/api/user/register">Register</a>
+    <a class="nav-link" href="/api/user/sigin">Sign In</a>
+    <a class="nav-link" href="/api/books">Books</a>
     <a class="nav-link" href="#">Contact Us</a>
   </div>
 </nav>
@@ -30,9 +30,9 @@
         <p>College Book Buy was created to give students the power to earn more money in selling and buying used books.</p>
         <div class="signup-block">
           <form class="" action="index.html" method="post">
-            <label for="email">Email</label>
+            <label id="email">Email</label>
             <input type="text" class="form-control" name="email" value="" placeholder="John Doe">
-            <label for="password">Password</label>
+            <label id="password">Password</label>
             <input type="text" class="form-control" name="password" value="" placeholder="Enter Your Password">
             <button type="button" class="btn btn-secondary btn-lg signIn-btn" name="signIn">Sign In</button>
           </form>
@@ -40,7 +40,7 @@
     </div>
     <div class="RegisterAction">
       <p id="regCall">Don't have an account? Why not register right now?</p>
-      <button type="button" class="btn btn-primary btn-lg main-reg-button" name="register">Register</button>
+      <button type="submit" class="btn btn-primary btn-lg main-reg-button" name="register">Register</button>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

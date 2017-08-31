@@ -11,6 +11,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 public class ViewController{
 
+    @Autowired
+    UserRepo users;
+
+
+    @RequestMapping(value ="/api/home", method = RequestMethod.GET)
+    public ModelAndView getHome(){
+        ModelAndView homeView = new ModelAndView();
+        homeView.setViewName("index");
+        return homeView;
+    }
 
     @RequestMapping(value ="/api/user/register", method = RequestMethod.GET)
     public ModelAndView getRegistration(){
@@ -33,10 +43,24 @@ public class ViewController{
         return profileView;
     }
 
-    @RequestMapping(value ="/api/user/createabook", method = RequestMethod.GET)
+    @RequestMapping(value ="/api/book/owned/add", method = RequestMethod.GET)
     public ModelAndView getCreateBook(){
         ModelAndView addabookView = new ModelAndView();
         addabookView.setViewName("createABook");
         return addabookView;
+    }
+
+    @RequestMapping(value ="/api/books", method = RequestMethod.GET)
+    public ModelAndView getAllBooks(){
+        ModelAndView bookView = new ModelAndView();
+        bookView.setViewName("books");
+        return bookView;
+    }
+
+    @RequestMapping(value ="/api/user/logout", method = RequestMethod.GET)
+    public ModelAndView getLogout(){
+        ModelAndView logoutView = new ModelAndView();
+        logoutView.setViewName("logout");
+        return logoutView;
     }
 }
