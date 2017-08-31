@@ -102,17 +102,21 @@ public class BookController {
 
     @GetMapping("/owned/{bookID}")
     public ResponseEntity getSpecificBook(@PathVariable int bookID, HttpSession session) {
-        try {
-            User loggedIn = users.findOne((int) session.getAttribute("userID"));
-            Book bookSearchedFor = books.findOne(bookID);
-            List<Book> bookList = loggedIn.getBooksOwned();
-            if (bookList.contains(bookSearchedFor)) {
-                return ResponseEntity.status(OK).body(new JSONResponse("Success", bookSearchedFor));
-            } else {
-                return ResponseEntity.status(OK).body(new JSONResponse("No book with that ID found in user's collection", null));
+        if (session.getAttribute("userID") != null) {
+            try {
+                User loggedIn = users.findOne((int) session.getAttribute("userID"));
+                Book bookSearchedFor = books.findOne(bookID);
+                List<Book> bookList = loggedIn.getBooksOwned();
+                if (bookList.contains(bookSearchedFor)) {
+                    return ResponseEntity.status(OK).body(new JSONResponse("Success", bookSearchedFor));
+                } else {
+                    return ResponseEntity.status(OK).body(new JSONResponse("No book with that ID found in user's collection", null));
+                }
+            } catch (Exception e) {
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error", null));
             }
-        } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error", null));
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that.", null));
         }
     }
 

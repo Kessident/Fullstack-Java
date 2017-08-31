@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -70,13 +71,30 @@ public class UserController {
 
     @PostMapping(value = "/register", consumes = "application/x-www-form-urlencoded")
     public ResponseEntity registerNewUserFormData(String name, String email, String password, String passwordConfirm, Integer majorID, Integer schoolID) {
-        if ((name == null || name.isEmpty()) || (email == null || email.isEmpty()) || (password == null || password.isEmpty()) || (passwordConfirm == null || passwordConfirm.isEmpty()) || (majorID
-            == null) || (schoolID == null)) {
+        try {
+            requireNonNull(name);
+            requireNonNull(email);
+            requireNonNull(password);
+            requireNonNull(passwordConfirm);
+            requireNonNull(majorID);
+            requireNonNull(schoolID);
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
+                throw new IllegalArgumentException("empty fields");
+            } else if (password.length() < 8) {
+                throw new IllegalArgumentException("small password");
+            } else if (!password.equals(passwordConfirm)) {
+                throw new IllegalArgumentException("non matching passwords");
+            }
+        } catch (NullPointerException ex) {
             return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please supply all required fields (name, email, password, passwordConfirm, majorID, schoolID)", null));
-        } else if (password.length() < 8) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Password must be at least 8 characters", null));
-        } else if (!password.equals(passwordConfirm)) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Passwords must match", null));
+        } catch (IllegalArgumentException ex) {
+            if (ex.getMessage().equals("empty fields")) {
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please ensure all required fields (name, email, password, passwordConfirm, majorID, schoolID) are not empty", null));
+            } else if (ex.getMessage().equals("small password")) {
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Password must be at least 8 characters", null));
+            } else if (ex.getMessage().equals("non matching passwords")) {
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Passwords must match", null));
+            }
         }
 
         Major major = majors.findOne(majorID);
@@ -114,7 +132,7 @@ public class UserController {
         try {
             json = new ObjectMapper().readTree(new StringReader(loginAttempt));
         } catch (IOException e) {
-            return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error processing request, please try again", null));
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again", null));
         }
 
         List<String> errors = new ArrayList<>();
@@ -129,26 +147,28 @@ public class UserController {
         }
 
         User exists = users.findByEmail(json.get("email").asText());
-
-        if (exists != null && !exists.isDeleted()) {
-            if (BCrypt.checkpw(json.get("password").asText(), exists.getPassword())) {
-                session.setAttribute("userID", exists.getUserID());
-
-                exists.setUpdatedAt(LocalDateTime.now());
-                users.save(exists);
-
-                return ResponseEntity.status(OK).body(new JSONResponse("Successfully logged in", null));
-            } else {
-                return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("Invalid username/password combination", null));
-            }
-        } else {
+        
+        if (exists == null || exists.isDeleted() || !BCrypt.checkpw(json.get("password").asText(), exists.getPassword())) {
             return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("Invalid username/password combination", null));
+        } else {
+            session.setAttribute("userID", exists.getUserID());
+
+            exists.setUpdatedAt(LocalDateTime.now());
+            users.save(exists);
+
+            return ResponseEntity.status(OK).body(new JSONResponse("Successfully logged in", null));
         }
     }
 
     @PostMapping(value = "/login", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
     public ResponseEntity loginUserFormData(String email, String password, HttpSession session) {
-        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+        try {
+            requireNonNull(email);
+            requireNonNull(password);
+            if (email.isEmpty() || password.isEmpty()) {
+                throw new NullPointerException();
+            }
+        } catch (NullPointerException ex) {
             return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provide both an email and a password", null));
         }
 

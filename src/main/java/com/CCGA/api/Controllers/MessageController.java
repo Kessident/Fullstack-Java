@@ -52,7 +52,7 @@ public class MessageController {
                     .body(new JSONResponse("Error reading message", null));
             }
         } catch (IOException ex) {
-            return ResponseEntity.status(BAD_REQUEST)
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                 .body(new JSONResponse("Error reading message", null));
         }
 

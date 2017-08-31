@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -89,8 +90,12 @@ public class TransactionController {
     @PostMapping(value = "/create", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
     public ResponseEntity createNewTransactionFormData(Integer sellerID, Integer buyerID, Integer bookSoldID, Long amountSoldFor, HttpSession session) {
         if (session.getAttribute("userID") != null) {
-
-            if (sellerID == null || buyerID == null || bookSoldID == null || amountSoldFor == null) {
+            try {
+                requireNonNull(sellerID);
+                requireNonNull(buyerID);
+                requireNonNull(bookSoldID);
+                requireNonNull(amountSoldFor);
+            } catch (NullPointerException ex) {
                 return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please supply all required fields(sellerID, buyerID, bookSoldID, amountSoldFor)", null));
             }
             User seller = users.findOne(sellerID);
