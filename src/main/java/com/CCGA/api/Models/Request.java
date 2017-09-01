@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name ="requests")
+@Table(name = "requests")
 public class Request {
     @Id
     @GeneratedValue
@@ -18,10 +18,12 @@ public class Request {
     @OneToOne
     private User userRequested;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Request() {

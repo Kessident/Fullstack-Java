@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,13 +17,17 @@ public class User {
     @GeneratedValue
     private int userID;
 
-    @Column @NotNull
+    @Column
+    @NotNull
     private String name;
 
-    @Column(unique = true) @NotNull
+    @Column(unique = true)
+    @NotNull
     private String email;
 
-    @Column @NotNull @JsonIgnore
+    @Column
+    @NotNull
+    @JsonIgnore
     private String password;
 
     @JsonIgnore
@@ -33,19 +38,22 @@ public class User {
     @OneToOne
     private School school;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private boolean isDeleted;
 
-    @OneToMany
+    @ManyToMany
     private List<Book> booksOwned;
 
-    @OneToMany
+    @ManyToMany
     private List<Listing> booksForSale;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime updatedAt;
 
     public User() {
@@ -62,6 +70,19 @@ public class User {
         this.isDeleted = isDeleted;
         this.booksOwned = booksOwned;
         this.booksForSale = booksForSale;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    public User(String name, String email, String password, Major major, School school) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.major = major;
+        this.school = school;
+        this.isDeleted = false;
+        this.booksOwned = new ArrayList<>();
+        this.booksForSale = new ArrayList<>();
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
@@ -154,23 +175,35 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public void addListing(Listing listing){
-        if (booksOwned.contains(listing.getOffered())){
+    public void addListing(Listing listing) {
+        int numberOfListings = 0;
+        for (Listing l : booksForSale) {
+            if (l.getOffered().equals(listing.getOffered())) {
+                numberOfListings++;
+            }
+        }
+        int numberOfBooks = 0;
+        for (Book l : booksOwned) {
+            if (l.equals(listing.getOffered())) {
+                numberOfBooks++;
+            }
+        }
+        if (numberOfListings < numberOfBooks) {
             booksForSale.add(listing);
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    public void addBook(Book newBook){
+    public void addBook(Book newBook) {
         booksOwned.add(newBook);
     }
 
-    public void removeListing(Listing listing){
+    public void removeListing(Listing listing) {
         booksForSale.remove(listing);
     }
 
-    public void removeBookOwned(Book book){
+    public void removeBookOwned(Book book) {
         booksOwned.remove(book);
     }
 

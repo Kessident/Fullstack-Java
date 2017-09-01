@@ -16,10 +16,12 @@ public class Major {
     @Column(unique = true)
     private String name;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Major() {

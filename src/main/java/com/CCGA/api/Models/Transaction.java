@@ -3,8 +3,6 @@ package com.CCGA.api.Models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,10 +24,12 @@ public class Transaction {
     @Column
     private long amountSoldFor;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Transaction() {

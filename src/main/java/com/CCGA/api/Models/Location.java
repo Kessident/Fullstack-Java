@@ -1,6 +1,6 @@
 package com.CCGA.api.Models;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class Location {

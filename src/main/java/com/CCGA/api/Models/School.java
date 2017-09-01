@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "schools")
@@ -19,7 +21,7 @@ public class School {
     @Column
     private Location location;
 
-    @OneToMany
+    @ManyToMany
     private List<Major> majorsOffered;
 
     @Column @JsonIgnore
@@ -29,6 +31,13 @@ public class School {
     private LocalDateTime updatedAt;
 
     public School() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    public School(String name) {
+        this.name = name;
+        majorsOffered = new ArrayList<>();
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
@@ -71,6 +80,11 @@ public class School {
 
     public void setMajorsOffered(List<Major> majorsOffered) {
         this.majorsOffered = majorsOffered;
+    }
+
+    public void addMajor(Major major){
+        Objects.requireNonNull(major);
+        majorsOffered.add(major);
     }
 
     public LocalDateTime getCreatedAt() {

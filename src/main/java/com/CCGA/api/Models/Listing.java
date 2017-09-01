@@ -25,10 +25,12 @@ public class Listing {
     @Column
     private String picture;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime createdAt;
 
-    @Column @JsonIgnore
+    @Column
+    @JsonIgnore
     private LocalDateTime updatedAt;
 
     public Listing() {

@@ -50,8 +50,8 @@ public class JSONResponse {
     @Override
     public String toString() {
         return "JSONResponse{" +
-                "message='" + message + '\'' +
-                ", data=" + data +
-                '}';
+            "message='" + message + '\'' +
+            ", data=" + data +
+            '}';
     }
 }
