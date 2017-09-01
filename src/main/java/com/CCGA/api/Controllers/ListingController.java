@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.io.StringReader;
 
+import static java.util.Objects.requireNonNull;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -64,40 +65,67 @@ public class ListingController {
             JsonNode json;
             try {
                 json = processJSON(ListingAsString);
-                if (json.get("bookID") == null || json.get("amount") == null || json.get("condition") == null) {
-                    return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provided all required fields", null));
+                if (!((json.has("bookID") || json.has("isbn")) && json.has("amount") && json.has("condition"))) {
+                    return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provided all required fields (\"bookID\" or \"isbn\", \"amount\", and \"condition\")", null));
                 }
             } catch (Exception e) {
                 return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again", null));
             }
 
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
-            Book toBeListed = books.findOne(json.get("bookID").asInt());
+            Book toBeListed = null;
+            if (json.has("bookID")){
+                toBeListed = books.findOne(json.get("bookID").asInt());
+            } else if (json.has("isbn")){
+                toBeListed = books.findByIsbn(json.get("isbn").asText());
+            }
+
             long amount = json.get("amount").asLong();
             Condition condition = Condition.valueOf((json.get("condition").asText()).toUpperCase());
-            String picture = json.get("picture").asText();
+            String picture = null;
+            if (json.has("picture")){
+                json.get("picture").asText();
+            }
 
             Listing newListing = new Listing(toBeListed, condition, amount, picture);
             try {
                 loggedIn.addListing(newListing);
             } catch (IllegalArgumentException e) {
-                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User does not own that book", null));
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User does not own enough of that book", null));
             }
 
-            users.save(loggedIn);
             listings.save(newListing);
+            users.save(loggedIn);
 
-            return ResponseEntity.status(CREATED).body(new JSONResponse("Listing created", null));
+            return ResponseEntity.status(CREATED).body(new JSONResponse("Listing created", newListing));
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
         }
     }
 
     @PostMapping(value = "/create", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
-    public ResponseEntity createListingFormData(Integer bookID, Long amount, String condition, String picture, HttpSession session) {
+    public ResponseEntity createListingFormData(Integer bookID, String isbn, Long amount, String condition, String picture, HttpSession session) {
         if (session.getAttribute("userID") != null) {
+            try {
+                requireNonNull(amount);
+                requireNonNull(condition);
+            } catch (NullPointerException ex) {
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provide both an \"amount\" and \"condition\" for this listing",null));
+            }
             User loggedIn = users.findOne((int) session.getAttribute("userID"));
-            Book toBeListed = books.findOne(bookID);
+
+            Book toBeListed;
+            if (bookID != null){
+                toBeListed = books.findOne(bookID);
+            } else if (isbn != null){
+                toBeListed = books.findByIsbn(isbn);
+            } else {
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provide either a \"bookID\" or \"isbn\" for a book", null));
+            }
+
+            if (toBeListed == null){
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("No book with that bookID or isbn found", null));
+            }
             Condition conditionEnum = Condition.valueOf(condition.toUpperCase());
 
             Listing newListing = new Listing(toBeListed, conditionEnum, amount, picture);
@@ -107,10 +135,10 @@ public class ListingController {
                 return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("User does not own that book", null));
             }
 
-            users.save(loggedIn);
             listings.save(newListing);
+            users.save(loggedIn);
 
-            return ResponseEntity.status(CREATED).body(new JSONResponse("Listing created", null));
+            return ResponseEntity.status(CREATED).body(new JSONResponse("Listing created", newListing));
 
         } else {
             return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
