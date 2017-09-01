@@ -1,9 +1,6 @@
 package com.CCGA.api.Controllers;
 
-import com.CCGA.api.Models.Book;
-import com.CCGA.api.Models.JSONResponse;
-import com.CCGA.api.Models.Request;
-import com.CCGA.api.Models.User;
+import com.CCGA.api.Models.*;
 import com.CCGA.api.Repositorys.BookRepo;
 import com.CCGA.api.Repositorys.MajorRepo;
 import com.CCGA.api.Repositorys.RequestRepo;
@@ -26,14 +23,18 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/api/request")
 public class RequestController {
 
+    private RequestRepo requests;
+    private UserRepo users;
+    private BookRepo books;
+    private MajorRepo majors;
+
     @Autowired
-    RequestRepo requests;
-    @Autowired
-    UserRepo users;
-    @Autowired
-    BookRepo books;
-    @Autowired
-    MajorRepo majors;
+    public RequestController(RequestRepo requests, UserRepo users, BookRepo books, MajorRepo majors) {
+        this.requests = requests;
+        this.users = users;
+        this.books = books;
+        this.majors = majors;
+    }
 
     //Get a list of all requests
     @GetMapping("/all")
@@ -41,7 +42,7 @@ public class RequestController {
         List<Request> requestsList = new ArrayList<>();
         requests.findAll().forEach(requestsList::add);
         if (requestsList.isEmpty()) {
-            return ResponseEntity.status(NOT_FOUND).body("No requests");
+            return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("No requests", null));
         } else {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", requestsList));
         }
@@ -54,7 +55,7 @@ public class RequestController {
         if (foundRequest != null) {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", foundRequest));
         } else {
-            return ResponseEntity.status(NOT_FOUND).body("Request with that ID not found");
+            return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Request with that ID not found", null));
         }
     }
 
@@ -67,12 +68,12 @@ public class RequestController {
 
             requestListByUser.addAll(requests.findAllByUserRequestedEquals(loggedIn));
             if (requestListByUser.isEmpty()) {
-                return ResponseEntity.status(NOT_FOUND).body("No requests");
+                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("No requests", null));
             } else {
                 return ResponseEntity.status(OK).body(new JSONResponse("Success", requestListByUser));
             }
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to create a listing");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
         }
     }
 
@@ -87,10 +88,10 @@ public class RequestController {
             if (foundRequest != null) {
                 return ResponseEntity.status(OK).body(new JSONResponse("Success", foundRequest));
             } else {
-                return ResponseEntity.status(NOT_FOUND).body("Request with that ID not found by logged in user");
+                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Request with that ID not found by logged in user", null));
             }
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to create a listing");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
         }
     }
 
@@ -104,10 +105,10 @@ public class RequestController {
             try {
                 json = new ObjectMapper().readTree(new StringReader(bookRequested));
                 if (json == null) {
-                    return ResponseEntity.status(BAD_REQUEST).body("No data supplied");
+                    return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("No data supplied", null));
                 }
             } catch (IOException e) {
-                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("Error processing request, please try again");
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again", null));
             }
 
             Book requested = new Book();
@@ -129,21 +130,65 @@ public class RequestController {
                     books.save(requested);
                     return ResponseEntity.status(CREATED).body(new JSONResponse("Request created", newRequest));
                 } else {
-                    return ResponseEntity.status(BAD_REQUEST).body("Please supply an ISBN number to search for, or a \"name\", \"author\", \"isbn\", and \"majorID\" to create a new book");
+                    return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please supply an ISBN number to search for, or a \"name\", \"author\", \"isbn\", and \"majorID\" to create a new" +
+                        " book", null));
                 }
             }
 
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to create a listing");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
+        }
+    }
+
+    //Create a new request for a book from logged in user
+    @PostMapping(value = "/create", consumes = "application/x-www-form-urlencoded;charset=UTF-8")
+    public ResponseEntity createBookRequestFormData(Integer bookID, String name, String author, String isbn, Integer majorID, HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            User loggedIn = users.findOne((int) session.getAttribute("userID"));
+
+            Book requested;
+            if (bookID != null) {
+                requested = books.findOne(bookID);
+
+                Request newRequest = new Request(requested, loggedIn);
+                requests.save(newRequest);
+
+                return ResponseEntity.status(CREATED).body(new JSONResponse("Request created", newRequest));
+            } else /*No ISBN provided*/ {
+                if (name != null && author != null && isbn != null && majorID != null) {
+                    Major major = majors.findOne(majorID);
+                    if (major != null) {
+                        requested = new Book();
+                        requested.setName(name);
+                        requested.setAuthor(author);
+                        requested.setIsbn(isbn);
+                        requested.setMajor(major);
+                        Request newRequest = new Request(requested, loggedIn);
+
+                        requests.save(newRequest);
+                        books.save(requested);
+
+                        return ResponseEntity.status(CREATED).body(new JSONResponse("Request created", newRequest));
+                    } else {
+                        return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Major with provided majorID not found.", null));
+                    }
+                } else {
+                    return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please supply an ISBN number to search for, or a \"name\", \"author\", \"isbn\", and \"majorID\" to create a new" +
+                        " book", null));
+                }
+            }
+
+        } else {
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
         }
     }
 
     @PostMapping("/create")
-    public ResponseEntity createBookRequestNotJSON(HttpSession session) {
+    public ResponseEntity createBookRequestMediaNotSupported(HttpSession session) {
         if (session.getAttribute("userID") != null) {
-            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body("Content-Type not supported, please use \"application/json\"");
+            return ResponseEntity.status(UNSUPPORTED_MEDIA_TYPE).body(new JSONResponse("Content-Type not supported, please use \"application/json\"", null));
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to do that");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to do that", null));
         }
     }
 
@@ -159,10 +204,10 @@ public class RequestController {
                 requests.delete(foundRequest);
                 return ResponseEntity.status(NO_CONTENT).build();
             } else {
-                return ResponseEntity.status(NOT_FOUND).body("Request with that ID not found by logged in user");
+                return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("Request with that ID not found by logged in user", null));
             }
         } else {
-            return ResponseEntity.status(UNAUTHORIZED).body("You must be logged in to create a listing");
+            return ResponseEntity.status(UNAUTHORIZED).body(new JSONResponse("You must be logged in to create a listing", null));
         }
     }
 

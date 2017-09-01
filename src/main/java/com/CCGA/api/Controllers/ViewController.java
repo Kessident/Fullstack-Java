@@ -1,43 +1,49 @@
 package com.CCGA.api.Controllers;
 
+import com.CCGA.api.Models.User;
 import com.CCGA.api.Repositorys.UserRepo;
-import jdk.nashorn.internal.runtime.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpSession;
+
 
 @Controller
 
-public class ViewController{
+public class ViewController {
 
     @Autowired
     UserRepo users;
 
-
-    @RequestMapping(value ="/api/home", method = RequestMethod.GET)
+    @RequestMapping(value ="/home", method = RequestMethod.GET)
     public ModelAndView getHome(){
         ModelAndView homeView = new ModelAndView();
         homeView.setViewName("index");
         return homeView;
     }
 
-    @RequestMapping(value ="/api/user/register", method = RequestMethod.GET)
-    public ModelAndView getRegistration(){
+    @RequestMapping(value = "/api/user/register", method = RequestMethod.GET)
+    public ModelAndView getRegistration() {
         ModelAndView registrationView = new ModelAndView();
         registrationView.setViewName("registration");
         return registrationView;
     }
 
-    @RequestMapping(value ="/api/user/signin", method = RequestMethod.GET)
-    public ModelAndView getSignin(){
-        ModelAndView signinView = new ModelAndView();
-        signinView.setViewName("signin");
-        return signinView;
+    @RequestMapping(value = "/api/user/login", method = RequestMethod.GET)
+    public String getLogIn(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return "login";
+        } else return "redirect:register";
+
     }
 
-    @RequestMapping(value ="/api/user/profile", method = RequestMethod.GET)
-    public ModelAndView getProfile(){
+    @RequestMapping(value = "/api/user/profile", method = RequestMethod.GET)
+    public ModelAndView getProfile(HttpSession session) {
         ModelAndView profileView = new ModelAndView();
         profileView.setViewName("profile");
         return profileView;
@@ -46,21 +52,38 @@ public class ViewController{
     @RequestMapping(value ="/api/book/owned/add", method = RequestMethod.GET)
     public ModelAndView getCreateBook(){
         ModelAndView addabookView = new ModelAndView();
-        addabookView.setViewName("createABook");
+        addabookView.setViewName("createAListing");
         return addabookView;
     }
 
-    @RequestMapping(value ="/api/books", method = RequestMethod.GET)
-    public ModelAndView getAllBooks(){
-        ModelAndView bookView = new ModelAndView();
-        bookView.setViewName("books");
-        return bookView;
+    @RequestMapping(value ="/api/request/create", method = RequestMethod.GET)
+    public ModelAndView getRequestBook(){
+        ModelAndView requestBookView = new ModelAndView();
+        requestBookView.setViewName("createAListing");
+        return requestBookView;
     }
 
     @RequestMapping(value ="/api/user/logout", method = RequestMethod.GET)
-    public ModelAndView getLogout(){
+    public ModelAndView getLogout() {
         ModelAndView logoutView = new ModelAndView();
         logoutView.setViewName("logout");
         return logoutView;
     }
+
+    @RequestMapping(value ="/api/book/search", method = RequestMethod.GET)
+    public String getBooks(HttpSession session) {
+        if (session.getAttribute("userID") != null) {
+            return "books";
+        } else return "redirect:login";
+
+    }
+
+    @RequestMapping(value ="/contact", method = RequestMethod.GET)
+    public ModelAndView getContact(){
+        ModelAndView contactView = new ModelAndView();
+        contactView.setViewName("contact");
+        return contactView;
+    }
+
+
 }

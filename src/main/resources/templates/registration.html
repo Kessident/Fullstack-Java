@@ -3,32 +3,32 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"/>
-    <link rel="stylesheet" href="../static/style.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+          crossorigin="anonymous"/>
+    <link rel="stylesheet" href="/CSS/style.css"/>
     <title>College Book Buy</title>
 </head>
 <body>
-  <nav class="nav navbar-expand-lg navbar-dark bg-dark">
+<nav class="nav navbar-expand-lg navbar-dark bg-dark">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+        <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="main-nav">
       <p class="navbar-brand">College Book Buy</p>
-      <a class="nav-link active" href="/api/home">Home</a>
+      <a class="nav-link active" href="/home">Home</a>
       <a class="nav-link" href="/api/user/register">Register</a>
-      <a class="nav-link" href="/api/user/signin">Sign In</a>
-      <a class="nav-link" href="/api/books">Books</a>
+      <a class="nav-link" href="/api/user/login">Sign In</a>
+      <a class="nav-link" href="/books">Books</a>
       <a class="nav-link" href="#">Contact Us</a>
     </div>
-  </nav>
+</nav>
 <div class="container">
     <h1>Create a New Account</h1>
     <form class="" action="/api/user/register" method="post">
         <div class="form-group">
             <label id="name">Name</label>
             <input type="text" class="form-control" name="name" value="" placeholder="John Doe"/>
-</div>
-
+        </div>
 
 
         <div class="form-group">
@@ -38,13 +38,13 @@
 
         <div class="form-group">
             <label id="school">Select Your School</label>
-            <select class="form-control" name="school" id="schoolSelector">
+            <select class="form-control" name="schoolID" id="schoolSelector">
             </select>
         </div>
 
         <div class="form-group">
             <label id="major">Select Your Major</label>
-            <select class="form-control" name="major" id="majorSelector">
+            <select class="form-control" name="majorID" id="majorSelector">
             </select>
         </div>
 

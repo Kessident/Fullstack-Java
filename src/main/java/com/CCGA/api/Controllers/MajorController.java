@@ -10,16 +10,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/api/major")
 public class MajorController {
 
+    private MajorRepo majors;
+
     @Autowired
-    MajorRepo majors;
+    public MajorController(MajorRepo majors) {
+        this.majors = majors;
+    }
 
     @GetMapping("/all")
     public ResponseEntity getAllMajors() {
@@ -32,8 +34,8 @@ public class MajorController {
     @GetMapping("/{majorID}")
     public ResponseEntity getAMajor(@PathVariable int majorID) {
         Major foundMajor = majors.findOne(majorID);
-        if (foundMajor == null){
-            return ResponseEntity.status(NOT_FOUND).body("major with that ID not found");
+        if (foundMajor == null) {
+            return ResponseEntity.status(NOT_FOUND).body(new JSONResponse("major with that ID not found", null));
         } else {
             return ResponseEntity.status(OK).body(new JSONResponse("Success", foundMajor));
         }
