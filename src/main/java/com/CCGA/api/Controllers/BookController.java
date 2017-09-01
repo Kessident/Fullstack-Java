@@ -54,12 +54,20 @@ public class BookController {
             try {
                 json = processJSON(bookToBeAdded);
             } catch (Exception e) {
-                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Error processing request, please try again", null));
+                return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new JSONResponse("Error processing request, please try again", null));
             }
 
             User loggedIn = users.findOne((Integer) session.getAttribute("userID"));
-            Book added = books.findByIsbn(json.get("isbn").asText());
-            loggedIn.addBook(added);
+            Book added;
+            if (json.has("bookID")){
+                added = books.findOne(json.get("bookID").asInt());
+                loggedIn.addBook(added);
+            } else if (json.has("isbn")) {
+                added = books.findByIsbn(json.get("isbn").asText());
+                loggedIn.addBook(added);
+            } else {
+                return ResponseEntity.status(BAD_REQUEST).body(new JSONResponse("Please provide a \"bookID\" or \"isbn\" to add a book to collection", null));
+            }
 
             users.save(loggedIn);
 
