@@ -28,10 +28,8 @@ public class ViewController {
     }
 
     @RequestMapping(value = "/api/user/register", method = RequestMethod.GET)
-    public ModelAndView getRegistration() {
-        ModelAndView registrationView = new ModelAndView();
-        registrationView.setViewName("registration");
-        return registrationView;
+    public String getRegistration(HttpSession session) {
+            return "registration";
     }
 
     @RequestMapping(value = "/api/user/login", method = RequestMethod.GET)
