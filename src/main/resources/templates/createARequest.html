@@ -17,14 +17,14 @@
       <a class="nav-link active" href="/home">Home</a>
       <a class="nav-link" href="/api/user/register">Register</a>
       <a class="nav-link" href="/api/user/signin">Sign In</a>
-      <a class="nav-link" href="/api/books">Books</a>
+      <a class="nav-link" href="/api/book/all">Books</a>
       <a class="nav-link" href="/contact">Contact Us</a>
     </div>
   </nav>
 <div class="container">
     <h1>Create A Book Request</h1>
     <p>Can't find the book you're looking for? Why not create a listing to let your classmates know what book you need.</p>
-    <form action="#" method="post">
+    <form action="/api/request/create" method="post">
         <div class="form-group">
             <label id="name">Name</label>
             <input type="text" class="form-control" name="name" value="" placeholder="The Joys of Biology"/>
@@ -51,7 +51,7 @@
             <label id="picture">Upload A Photo</label>
             <input type="file" name="picture" accept="image/*"/>
         </div>
-        <button type="submit" class="btn btn-primary btn-lg" name="listing">Create Book Listing</button>
+        <button type="submit" class="btn btn-primary btn-lg" name="listing">Create Book Request</button>
     </form>
 
 </div>

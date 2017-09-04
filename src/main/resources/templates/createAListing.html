@@ -17,14 +17,14 @@
           <a class="nav-link active" href="/home">Home</a>
           <a class="nav-link" href="/api/user/register">Register</a>
           <a class="nav-link" href="/api/user/login">Sign In</a>
-          <a class="nav-link" href="/api/books">Books</a>
+          <a class="nav-link" href="/api/book/all">Books</a>
           <a class="nav-link" href="/contact">Contact Us</a>
       </div>
   </nav>
 <div class="container">
-    <h1>Add My Book</h1>
+    <h1>Sale My Book</h1>
     <p>Need to sell your book? Create Your Listing Here</p>
-    <form action="/api/book/owned/add" method="post">
+    <form action="/api/book/create" method="post">
         <div class="form-group">
             <label id="name">Name</label>
             <input type="text" class="form-control" name="name" value="" placeholder="The Joys of Biology"/>
@@ -46,27 +46,24 @@
             </select>
         </div>
 
-        <!--<div class="form-group">-->
-            <!--<label id="price">Price</label>-->
-            <!--<input type="text" class="form-control" name="price" value="" placeholder="80"/>-->
-        <!--</div>-->
-
-        <!--<div class="form-group">-->
-            <!--<label id="picture">Upload A Photo</label>-->
-            <!--<input type="file" name="picture" accept="image/*"/>-->
-        <!--</div>-->
-        <div>
-            <form method="POST" enctype="multipart/form-data" action="/api/book/owned/add">
-                <table>
-                    <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
-                    <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
-                </table>
-            </form>
+        <div class="form-group">
+            <label id="price">Price</label>
+            <input type="text" class="form-control" name="price" value="" placeholder="$80"/>
         </div>
 
-
-
-        <button onclick="window.location.href='/api/listing/all'">Add My Book</button>
+        <div class="form-group">
+            <label id="picture">Upload A Photo</label>
+            <input type="file" name="picture" accept="image/*"/>
+        </div>
+        <div>
+            <!--<form method="POST" enctype="multipart/form-data" action="/api/book/create">-->
+                <!--<table>-->
+                    <!--<tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>-->
+                    <!--<tr><td></td><td><input type="submit" value="Upload" /></td></tr>-->
+                <!--</table>-->
+            <!--</form>-->
+        </div>
+        <button onclick="window.location.href='/api/book/create'">Sale My Book</button>
     </form>
 
 </div>
