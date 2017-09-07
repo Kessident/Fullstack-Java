@@ -1,6 +1,6 @@
 let bookList = document.getElementById("listOfBooks");
 
-let url = "/api/book/all";
+let url = "/api/book/search";
 let request = new Request(url, {
     method: "GET",
     headers: new Headers({

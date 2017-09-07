@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "books")
@@ -25,6 +26,7 @@ public class Book {
     private String description;
 
     //Base-64 encoded string of book picture
+
     @Column
     private String picture;
 
@@ -143,12 +145,12 @@ public class Book {
     @Override
     public String toString() {
         return "Book{" +
-            "bookID=" + bookID +
-            ", name='" + name + '\'' +
-            ", author='" + author + '\'' +
-            ", isbn='" + isbn + '\'' +
-            ", description='" + description + '\'' +
-            ", picture='" + picture + '\'' +
-            '}';
+                "bookID=" + bookID +
+                ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", description='" + description + '\'' +
+                ", picture='" + picture + '\'' +
+                '}';
     }
 }

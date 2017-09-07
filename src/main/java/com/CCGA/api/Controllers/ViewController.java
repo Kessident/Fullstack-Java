@@ -38,15 +38,8 @@ public class ViewController {
     }
 
     @RequestMapping(value = "/api/user/login", method = RequestMethod.GET)
-    public String getLogIn(HttpSession session) {
+    public String getLogIn() {
         return "login";
-    }
-
-    @RequestMapping(value = "/api/user/profile", method = RequestMethod.GET)
-    public ModelAndView getProfile(HttpSession session) {
-        ModelAndView profileView = new ModelAndView();
-        profileView.setViewName("profile");
-        return profileView;
     }
 
     @RequestMapping(value = "/api/book/create", method = RequestMethod.GET)
@@ -84,13 +77,25 @@ public class ViewController {
         return contactView;
     }
 
-    @RequestMapping(value = "/profile", method = RequestMethod.GET)
-    public String getUserProfile(HttpSession session, Model model) {
-        if (session.getAttribute("userID") != null) {
-            User user = users.findOne((int) session.getAttribute("userID"));
-            model.addAttribute("user", user);
-            return "profile";
-        } else return "redirect:login";
+//    @RequestMapping(value = "/api/user/profile", method = RequestMethod.GET)
+//    public String getUserProfile(HttpSession session, Model model) {
+//        if (session.getAttribute("userID") != null) {
+//            User user = users.findOne((int) session.getAttribute("userID"));
+//            model.addAttribute("user", user);
+//            return "profile";
+//        } else return "redirect:login";
+//
+//    }
 
+
+    @RequestMapping(value = "/api/user/profile", method = RequestMethod.GET)
+    public ModelAndView getProfile() {
+        ModelAndView profileView = new ModelAndView();
+        profileView.setViewName("profile");
+        return profileView;
     }
+
+
+
+
 }
