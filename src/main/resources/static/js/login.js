@@ -21,7 +21,7 @@ loginForm.addEventListener("submit", e => {
         errMsgsDiv.innerHTML = "";
 
         if (res.status === 200) {
-            window.location.replace("/");
+            window.location.replace("/api/user/profile");
         } else {
             res.json().then(data => {
                 let newErrP = document.createElement("p");

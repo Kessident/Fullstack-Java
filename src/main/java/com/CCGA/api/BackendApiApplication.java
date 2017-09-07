@@ -13,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 @SpringBootApplication
 public class BackendApiApplication {
     private static final Logger log = LoggerFactory.getLogger(BackendApiApplication.class);
-
     public static void main(String[] args) {
         SpringApplication.run(BackendApiApplication.class, args);
     }
@@ -146,5 +145,4 @@ public class BackendApiApplication {
 ////            }
 ////            log.info("");
 //        };
-//    }
-}
+//    }}

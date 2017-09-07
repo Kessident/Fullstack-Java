@@ -12,18 +12,18 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-      <div class="collapse navbar-collapse" id="main-nav">
-          <p class="navbar-brand">College Book Buy</p>
-          <a class="nav-link active" href="/">Home</a>
-          <a class="nav-link" href="/register">Register</a>
-          <a class="nav-link" href="/login">Sign In</a>
-          <a class="nav-link" href="/books">Books</a>
-          <!--<a class="nav-link" href="#">Contact Us</a>-->
-      </div>
+    <div class="collapse navbar-collapse" id="main-nav">
+      <p class="navbar-brand">College Book Buy</p>
+      <a class="nav-link active" href="/home">Home</a>
+      <a class="nav-link" href="/api/user/register">Register</a>
+      <a class="nav-link" href="/api/user/login">Sign In</a>
+      <a class="nav-link" href="/books">Books</a>
+      <a class="nav-link" href="/contact">Contact Us</a>
+    </div>
   </nav>
 <div class="container">
     <h1>You've been successfully Logged Out</h1>
-    <form action="#" method="post">
+    <form action="/api/user/logout" method="post">
         <div class="form-group">
             <label id="email">Email</label>
             <input type="email" class="form-control" name="email" value="" placeholder="youremail@mail.com"/>
@@ -34,11 +34,11 @@
             <input type="password" class="form-control" name="password" value="" placeholder="Enter Your Password"/>
         </div>
 
-        <button type="button" class="btn btn-secondary btn-lg" name="signUp">Sign Up</button>
+        <button type="submit" class="btn btn-secondary btn-lg" name="signUp">Sign Up</button>
     </form>
     <div class="register-text">
         <p>Not A Member? Why Not Create An Account?</p>
-        <button type="button" class="btn btn-primary btn-lg" name="linkReg" onclick="location.href='http://google.com';">Register</button>
+        <button type="submit" class="btn btn-primary btn-lg" name="linkReg" onclick="location.href='http://localhost:8080/api/user/register';">Register</button>
     </div>
 
 </div>

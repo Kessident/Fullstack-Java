@@ -15,17 +15,17 @@
     </button>
     <div class="collapse navbar-collapse" id="main-nav">
         <p class="navbar-brand">College Book Buy</p>
-        <a class="nav-link active" href="/">Home</a>
-        <a class="nav-link" href="/register">Register</a>
-        <a class="nav-link" href="/login">Sign In</a>
-        <a class="nav-link" href="/books">Books</a>
-        <!--<a class="nav-link" href="#">Contact Us</a>-->
+        <a class="nav-link active" href="/home">Home</a>
+        <a class="nav-link" href="/api/user/register">Register</a>
+        <a class="nav-link" href="/api/user/login">Sign In</a>
+        <a class="nav-link" href="/api/book/all">Books</a>
+        <a class="nav-link" href="/contact">Contact Us</a>
     </div>
 </nav>
 <div class="container">
     <h1>Contact Us</h1>
     <div id="errMsgs"></div>
-    <form action="/api/user/contact" method="post" id="contactForm">
+    <form action="/contact" method="post" id="contactForm">
         <div class="form-group">
             <label id="name">Name</label>
             <input type="text" class="form-control" name="name" placeholder="John Doe"/>
