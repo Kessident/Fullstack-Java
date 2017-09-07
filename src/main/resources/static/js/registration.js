@@ -28,7 +28,7 @@ fetch("/api/major/all").then(response => {
     });
 });
 
-let form = document.getElementById("submitForm");
+let form = document.getElementById("registrationForm");
 
 form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -53,8 +53,8 @@ form.addEventListener("submit", function (e) {
     fetch(registerNewUser).then(res => {
         errMsgsDiv.innerHTML = "";
 
-        if (res.status === 201) {
-            window.location.replace("/login");
+        if (res.status === 200) {
+            window.location.replace("/api/user/profile");
         } else {
             res.json().then(data => {
                 let newErrP = document.createElement("p");

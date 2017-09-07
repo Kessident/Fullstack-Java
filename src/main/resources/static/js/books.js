@@ -2,7 +2,7 @@ let bookList = document.getElementById("listOfBooks");
 
 let url = "/api/book/search";
 let request = new Request(url, {
-    method: "POST",
+    method: "GET",
     headers: new Headers({
         'Content-Type': 'application/x-www-form-urlencoded'
     }),
@@ -20,6 +20,7 @@ fetch(request).then(res => {
             newP.innerText += "\nBook ISBN: " + book.isbn;
             newP.innerText += "\nBook description: " + book.description;
             newP.innerText += "\nBook Major: " + book.major.name;
+            newP.innerText += "\nBook Picture: " + book.picture;
             bookList.appendChild(newP);
         });
     });
